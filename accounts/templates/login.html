@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        font-family: 'Fira Code', monospace;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+        width: 100%;
+        max-width: 500px;
+        border: 1px solid rgba(0, 255, 204, 0.4);
+        color: #00ffcc;
+        animation: popIn 0.6s ease-out;
+        z-index: 1;
+      }
+
+      h3 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+
+      .alert {
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        width: 100%;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        background-color: #00ffcc;
+        color: #000;
+        border: none;
+        transition: transform 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        transform: scale(1.05);
+        background-color: #00ccaa;
+      }
+
+      label, input, a, p {
+        color: #00ffcc;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .form-text {
+        text-align: center;
+        color: #00ffcc;
+      }
+
+      .form-check-label {
+        color: #00ffcc;
+      }
+
+      .form-control {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid #00ffcc;
+        color: #fff !important;
+      }
+
+      .form-control::placeholder {
+        color: #b2fefa;
+        opacity: 0.8;
+      }
+
+      .form-control:focus {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        color: #fff !important;
+        box-shadow: none;
+        border-color: #00ffcc;
+      }
+
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h3>Login</h3>
+        <hr />
+
+        {% if messages %}
+          <div class="alert alert-primary" role="alert">
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="form-group">
+          <label for="exampleInputEmail1">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            name="username"
+            id="exampleInputEmail1"
+            placeholder="Enter username"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="form-control"
+            id="exampleInputPassword1"
+            placeholder="Password"
+            required
+          />
+        </div>
+
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="showPassword" />
+          <label class="form-check-label" for="showPassword">Show Password</label>
+        </div>
+
+        <p class="form-text mb-3">
+          Don't have an account? <a href="/auth/register/">Register</a>
+        </p>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+
+    <script>
+      const checkbox = document.getElementById('showPassword');
+      if (checkbox) {
+        checkbox.addEventListener('change', function () {
+          const passwordInput = document.getElementById('exampleInputPassword1');
+          passwordInput.type = this.checked ? 'text' : 'password';
+        });
+      }
+    </script>
+  </body>
+</html>

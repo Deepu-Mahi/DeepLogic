@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Online Judge Boot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: black;
+      color: #00ffcc;
+      font-family: 'Fira Code', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas#matrix {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .welcome-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.75);
+      border: 2px solid #00ffcc;
+      padding: 50px 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #00ffcc66;
+      text-align: center;
+      animation: fadeIn 1s ease;
+      max-width: 600px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .boot-sequence {
+      white-space: pre-line;
+      font-size: 1em;
+      line-height: 1.6em;
+      min-height: 180px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .btn-login {
+      display: inline-block;
+      padding: 14px 32px;
+      font-size: 1em;
+      font-weight: bold;
+      border: 2px solid #00ffcc;
+      background: none;
+      color: #00ffcc;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffcc;
+      transition: all 0.3s ease-in-out;
+      margin-top: 20px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-login.show {
+      opacity: 1;
+      pointer-events: all;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="welcome-container">
+    <div id="boot" class="boot-sequence"></div>
+    <a href="/auth/login/" class="btn-login" id="loginBtn">Enter Code Arena</a>
+  </div>
+
+  <script>
+    // Boot Sequence
+    const bootLines = [
+      "> Initializing Online Judge...",
+      "> Loading problem sets... ✔",
+      "> Connecting to compiler... ✔",
+      "> Verifying environment... ✔",
+      "> Compilers active. ✔",
+      "> Ready. Welcome, Coder."
+    ];
+
+    const bootDiv = document.getElementById("boot");
+    const loginBtn = document.getElementById("loginBtn");
+
+    let i = 0;
+    function showNextLine() {
+      if (i < bootLines.length) {
+        bootDiv.innerHTML += bootLines[i] + "\n";
+        i++;
+        setTimeout(showNextLine, 700);
+      } else {
+        loginBtn.classList.add("show");
+      }
+    }
+    showNextLine();
+
+    // Matrix background animation
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ffcc";
+      ctx.font = fontSize + "px monospace";
+      drops.forEach((y, i) => {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+        drops[i] = y * fontSize > canvas.height || Math.random() > 0.975 ? 0 : y + 1;
+      });
+    }
+    setInterval(draw, 33);
+  </script>
+</body>
+</html>
