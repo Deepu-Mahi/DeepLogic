@@ -34,8 +34,16 @@ def submit(request):
             output_data=(output if output else "") + ("\n\nErrors:\n" + errors if errors else "")
         )
 
-        return render(request, "result.html", {"submission": submission})
+        return render(request, "index.html", {
+            "submission": submission,
+            "language": language,
+            "code": code,
+            "input_data": input_data,
+            "output": output,
+            "errors": errors,
+        })
 
+    # GET request - render blank form
     return render(request, "index.html")
 
 

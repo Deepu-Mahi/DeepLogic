@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0; padding: 40px 20px;
+      background: #1e1e2f;
+      font-family: 'Fira Code', monospace;
+      color: #cfd8dc;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #282c34;
+      max-width: 600px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      padding: 30px 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #61dafb;
+      margin-bottom: 30px;
+      user-select: none;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+    .btn-compiler {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 40px;
+      background: #61dafb;
+      color: #1e1e2f;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 15px rgba(97, 218, 251, 0.4);
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    .btn-compiler:hover {
+      background: #21a1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome, {{ user.username }}!</h1>
+    <p>This is your profile page.</p>
+    <a href="/submit/" class="btn-compiler">Go to Compiler</a>
+  </div>
+</body>
+</html>

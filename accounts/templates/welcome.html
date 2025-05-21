@@ -11,7 +11,7 @@
       padding: 0;
       height: 100vh;
       background: black;
-      color: #00ffcc;
+      color: #00bfff;
       font-family: 'Fira Code', monospace;
       display: flex;
       align-items: center;
@@ -31,10 +31,10 @@
       position: relative;
       z-index: 1;
       background: rgba(0, 0, 0, 0.75);
-      border: 2px solid #00ffcc;
+      border: 2px solid #00bfff;
       padding: 50px 40px;
       border-radius: 20px;
-      box-shadow: 0 0 30px #00ffcc66;
+      box-shadow: 0 0 30px #00bfff66;
       text-align: center;
       animation: fadeIn 1s ease;
       max-width: 600px;
@@ -58,12 +58,12 @@
       padding: 14px 32px;
       font-size: 1em;
       font-weight: bold;
-      border: 2px solid #00ffcc;
+      border: 2px solid #00bfff;
       background: none;
-      color: #00ffcc;
+      color: #00bfff;
       text-decoration: none;
       border-radius: 10px;
-      box-shadow: 0 0 10px #00ffcc;
+      box-shadow: 0 0 10px #00bfff;
       transition: all 0.3s ease-in-out;
       margin-top: 20px;
       opacity: 0;
@@ -116,7 +116,7 @@
     }
     showNextLine();
 
-    // Matrix background animation
+    // Matrix background animation (Blue Theme)
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.height = window.innerHeight;
@@ -129,7 +129,7 @@
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00ffcc";
+      ctx.fillStyle = "#00bfff";
       ctx.font = fontSize + "px monospace";
       drops.forEach((y, i) => {
         const text = letters[Math.floor(Math.random() * letters.length)];
