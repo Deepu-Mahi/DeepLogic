@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile - Online Judge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Fira Code', monospace;
+      background-color: #000;
+      color: #00bfff;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #111;
+      box-shadow: 0 2px 10px #00bfff55;
+    }
+
+    .navbar .left-nav, .navbar .right-nav {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: #00bfff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .navbar a:hover {
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
+      transform: scale(1.05);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+    }
+
+    .welcome-box {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .welcome-box h1 {
+      font-size: 2.8em;
+      text-shadow: 0 0 15px #00bfff;
+      margin-bottom: 10px;
+    }
+
+    .welcome-box p {
+      font-size: 1.2em;
+    }
+
+    .btn-compiler {
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background: linear-gradient(45deg, #00bfff, #1e90ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+    }
+
+    .btn-compiler:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px #00bfff, 0 0 20px #00bfff;
+    }
+
+    .card {
+      background: rgba(0, 191, 255, 0.05);
+      border: 1px solid #00bfff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00bfff44;
+      width: 90%;
+      max-width: 600px;
+      margin-top: 30px;
+      display: none;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      text-align: center;
+      text-shadow: 0 0 8px #00bfffaa;
+    }
+
+    .card p {
+      margin: 10px 0;
+      border-bottom: 1px solid #00bfff33;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="left-nav">
+      <a id="profileBtn">Profile</a>
+    </div>
+    <div class="right-nav">
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="welcome-box">
+      <h1>Welcome, {{ user.username }}</h1>
+      <p>Ready to code? Launch the compiler below 👇</p>
+    </div>
+
+    <a href="http://127.0.0.1:8000/submit/">
+      <button class="btn-compiler">Go to Compiler</button>
+    </a>
+
+    <!-- Hidden Card -->
+    <div class="card" id="profileCard">
+      <h3>Your Account Info</h3>
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email|default:"Not set" }}</p>
+      <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+    </div>
+  </div>
+
+  <script>
+    const profileBtn = document.getElementById("profileBtn");
+    const profileCard = document.getElementById("profileCard");
+
+    profileBtn.addEventListener("click", () => {
+      profileCard.style.display =
+        profileCard.style.display === "none" || profileCard.style.display === ""
+          ? "block"
+          : "none";
+    });
+  </script>
+
+</body>
+</html>

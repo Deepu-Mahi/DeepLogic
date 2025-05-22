@@ -9,6 +9,17 @@ from django.contrib import messages
 from submit.models import CodeSubmission
 import os
 
+
+@login_required
+def profile_view(request):
+    return render(request, "profile.html", {
+        "user": request.user
+    })
+
+def index(request):
+    # logic...
+    return render(request, 'submit/index.html')
+
 @login_required(login_url='/auth/login/')
 def submit(request):
     if request.method == "POST":

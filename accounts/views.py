@@ -36,30 +36,29 @@ def register_user(request):
     
 
 def login_user(request):
-
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
 
         if not User.objects.filter(username=username).exists():
-            messages.info(request,'User with this username does not exist')
+            messages.info(request, 'User with this username does not exist')
             return redirect('/auth/login/')
-        
+
         user = authenticate(username=username, password=password)
 
         if user is None:
-            messages.info(request,'invalid password')
+            messages.info(request, 'Invalid password')
             return redirect('/auth/login/')
-        
 
-        login(request,user)
-        messages.info(request,'login successful')
+        login(request, user)
+        messages.info(request, 'Login successful')
 
-        return redirect('/submit/')
-    
+        return redirect('/submit/profile/')  # ✅ Redirect to profile page after login
+
     template = loader.get_template('login.html')
-    context ={}
-    return HttpResponse(template.render(context,request))
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 
 def logout_user(request):
     logout(request)
