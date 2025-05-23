@@ -1,104 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>{{ problem.title }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Fira Code', monospace;
-            background: radial-gradient(circle at center, #000, #001022);
-            color: #00bfff;
-            margin: 40px auto;
-            max-width: 900px;
-            padding: 0 20px;
-            line-height: 1.6;
-        }
+  <meta charset="UTF-8" />
+  <title>{{ problem.title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Fira Code', monospace;
+      background: linear-gradient(135deg, #000 0%, #001d33 100%);
+      color: #00bfff;
+      margin: 40px auto;
+      max-width: 950px;
+      padding: 0 20px;
+      line-height: 1.7;
+    }
 
-        @media (max-width: 600px) {
-            body {
-                margin: 20px 10px;
-                padding: 0 10px;
-            }
-        }
+    h1 {
+      text-align: center;
+      text-shadow: 0 0 15px #00bfff;
+      margin-bottom: 30px;
+      font-size: 3em;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
 
-        h1 {
-            text-align: center;
-            text-shadow: 0 0 15px #00bfff;
-            margin-bottom: 30px;
-            font-size: 2.8em;
-        }
+    @keyframes glowPulse {
+      0%, 100% { text-shadow: 0 0 15px #00bfff; }
+      50% { text-shadow: 0 0 25px #00ffff; }
+    }
 
-        p {
-            background-color: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 6px;
-            max-width: 750px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: justify;
-            color: #66cfff;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            white-space: pre-wrap;
-        }
+    p, pre, textarea {
+      background-color: rgba(0,0,0,0.35);
+      padding: 12px;
+      border-radius: 10px;
+      margin: 12px auto;
+      color: #bbf0ff;
+      font-size: 1.1em;
+      max-width: 800px;
+      box-shadow: 0 0 10px #00bfff22;
+    }
 
-        h3 {
-            max-width: 750px;
-            margin: 30px auto 10px auto;
-            text-shadow: 0 0 8px #00bfffaa;
-            font-weight: 700;
-            font-size: 1.4em;
-        }
+    h3 {
+      max-width: 800px;
+      margin: 40px auto 10px auto;
+      text-shadow: 0 0 8px #00ffff;
+      font-size: 1.5em;
+    }
 
-        pre {
-            background-color: #111a2b;
-            padding: 15px;
-            border-radius: 8px;
-            max-width: 750px;
-            margin-left: auto;
-            margin-right: auto;
-            white-space: pre-wrap;
-            box-shadow: 0 0 8px #00bfff44;
-            color: #00bfff;
-            font-size: 1em;
-            transition: box-shadow 0.3s ease;
-        }
+    textarea {
+      width: 100%;
+      height: 220px;
+      resize: vertical;
+      font-family: 'Fira Code', monospace;
+      color: #00f0ff;
+      background-color: #000b1d;
+      border: 1px solid #00bfff66;
+      box-shadow: 0 0 15px #00bfff33;
+      transition: all 0.3s ease;
+    }
 
-        pre:hover {
-            box-shadow: 0 0 20px #00bfffaa;
-        }
+    textarea:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 25px #00ffff88;
+    }
 
-        a.back-link {
-            display: block;
-            max-width: 750px;
-            margin: 50px auto 0 auto;
-            text-align: center;
-            color: #00bfff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1em;
-            transition: text-shadow 0.3s ease;
-        }
+    select, button {
+      font-family: 'Fira Code', monospace;
+      font-size: 1em;
+      margin: 10px auto;
+      display: block;
+      padding: 12px 20px;
+      background: #001d33;
+      color: #00e1ff;
+      border: 1px solid #00bfff88;
+      border-radius: 6px;
+      box-shadow: 0 0 10px #00bfff55;
+      transition: background-color 0.3s ease;
+    }
 
-        a.back-link:hover {
-            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
-        }
-    </style>
+    button:hover {
+      background-color: #004466;
+      cursor: pointer;
+      box-shadow: 0 0 20px #00ffffaa;
+    }
+
+    .test-result {
+      background-color: #080820;
+      border-left: 5px solid;
+      border-radius: 10px;
+      margin: 15px auto;
+      padding: 15px;
+      max-width: 800px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.1);
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .Passed {
+      border-color: #00ff88;
+      box-shadow: 0 0 10px #00ff8855;
+    }
+
+    .Failed {
+      border-color: #ff5555;
+      box-shadow: 0 0 10px #ff555555;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .back-link {
+      display: block;
+      max-width: 800px;
+      margin: 50px auto;
+      text-align: center;
+      color: #00e1ff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      transition: text-shadow 0.3s;
+    }
+
+    .back-link:hover {
+      text-shadow: 0 0 10px #00ffff, 0 0 15px #00bfff;
+    }
+
+    label {
+      display: block;
+      text-align: center;
+      font-size: 1.1em;
+      margin: 15px auto 5px;
+      color: #66ccff;
+    }
+
+    form {
+      background-color: rgba(0, 0, 0, 0.15);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00bfff33;
+      max-width: 800px;
+      margin: 20px auto 40px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>{{ problem.title }}</h1>
+  <h1>{{ problem.title }}</h1>
 
-    <p>{{ problem.description|linebreaks }}</p>
+  <p>{{ problem.description|linebreaks }}</p>
 
-    <h3>Input Format</h3>
-    <pre>{{ problem.input_format }}</pre>
+  <h3>Input Format</h3>
+  <pre>{{ problem.input_format }}</pre>
 
-    <h3>Output Format</h3>
-    <pre>{{ problem.output_format }}</pre>
+  <h3>Output Format</h3>
+  <pre>{{ problem.output_format }}</pre>
 
-    <a href="{% url 'problem_list' %}" class="back-link">&larr; Back to Problems List</a>
+  <h3>Try Your Code</h3>
+  <form method="post">
+    {% csrf_token %}
+    <label>
+      Language:
+      <select name="language">
+        <option value="py" {% if posted_language == "py" %}selected{% endif %}>Python</option>
+        <option value="cpp" {% if posted_language == "cpp" %}selected{% endif %}>C++</option>
+        <option value="c" {% if posted_language == "c" %}selected{% endif %}>C</option>
+        <option value="java" {% if posted_language == "java" %}selected{% endif %}>Java</option>
+      </select>
+    </label>
+
+    <label>
+      Code:
+      <textarea name="code" placeholder="Write your code here...">{{ posted_code }}</textarea>
+    </label>
+
+    <label>
+      Custom Input (used for "Run Code" only):
+      <textarea name="custom_input" placeholder="Enter custom input...">{{ custom_input }}</textarea>
+    </label>
+
+    <div class="btn-group">
+      <button type="submit" name="action" value="run">Run Code</button>
+      <button type="submit" name="action" value="submit">Submit</button>
+    </div>
+  </form>
+
+  {% if raw_output or raw_errors %}
+    <h3>Run Result</h3>
+    <div class="test-result">
+      {% if raw_output %}
+        <strong>Your Output:</strong><br/><pre>{{ raw_output }}</pre>
+      {% endif %}
+      {% if raw_errors %}
+        <strong>Errors:</strong><br/><pre>{{ raw_errors }}</pre>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if test_results %}
+    <h3>Test Case Results</h3>
+    {% for result in test_results %}
+      <div class="test-result {{ result.status }}">
+        <strong>Status:</strong> {{ result.status }}<br/>
+        <strong>Input:</strong><br/><pre>{{ result.input }}</pre>
+        <strong>Expected Output:</strong><br/><pre>{{ result.expected }}</pre>
+        <strong>Your Output:</strong><br/><pre>{{ result.output }}</pre>
+        {% if result.errors %}
+          <strong>Errors:</strong><br/><pre>{{ result.errors }}</pre>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <a href="{% url 'problem_list' %}" class="back-link">&larr; Back to Problems List</a>
 
 </body>
 </html>

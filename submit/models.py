@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User  
 
 class CodeSubmission(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # <-- This line must exist
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    problem = models.ForeignKey('Problem', on_delete=models.CASCADE, null=True, blank=True)
     language = models.CharField(max_length=20)
     code = models.TextField()
     input_data = models.TextField(blank=True, null=True)
@@ -10,9 +11,8 @@ class CodeSubmission(models.Model):
     errors = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-
-
+    def __str__(self):
+        return f"{self.user.username} - {self.language} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
 
 class Problem(models.Model):
     DIFFICULTY_LEVELS = [
@@ -31,4 +31,11 @@ class Problem(models.Model):
 
     def __str__(self):
         return self.title
-   
+
+class TestCase(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='test_cases')
+    input_data = models.TextField()
+    expected_output = models.TextField()
+
+    def __str__(self):
+        return f"Test Case for {self.problem.title}"

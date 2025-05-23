@@ -18,23 +18,73 @@ def problem_list(request):
 @login_required
 def problem_detail(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
-    return render(request, 'problem_detail.html', {'problem': problem})
+    test_results = None
+    raw_output = None
+    raw_errors = None
+    error = None
 
-@login_required
+    if request.method == 'POST':
+        language = request.POST.get("language")
+        code = request.POST.get("code")
+        action = request.POST.get("action")  # either 'run' or 'submit'
+        custom_input = request.POST.get("custom_input", "")
+
+        if not language or not code:
+            error = "Please select a language and write your code."
+        else:
+            if action == "run":
+                # Just run the code with custom input
+                raw_output, raw_errors = run_code(language, code, custom_input)
+
+            elif action == "submit":
+                # Validate against test cases
+                test_results = []
+                for test_case in problem.test_cases.all():
+                    input_data = test_case.input_data
+                    expected_output = test_case.expected_output.strip()
+
+                    actual_output, errors = run_code(language, code, input_data)
+
+                    passed = actual_output.strip() == expected_output and not errors
+                    test_results.append({
+                        'input': input_data,
+                        'expected': expected_output,
+                        'output': actual_output.strip(),
+                        'errors': errors,
+                        'status': "Passed" if passed else "Failed"
+                    })
+
+                # Save submission for the problem
+                CodeSubmission.objects.create(
+                    user=request.user,
+                    problem=problem,
+                    language=language,
+                    code=code,
+                    input_data="Multiple test cases",
+                    output="\n".join([r['output'] for r in test_results]),
+                    errors="\n".join([r['errors'] for r in test_results if r['errors']])
+                )
+
+    context = {
+        'problem': problem,
+        'test_results': test_results,
+        'raw_output': raw_output,
+        'raw_errors': raw_errors,
+        'error': error,
+        'posted_language': request.POST.get('language', ''),
+        'posted_code': request.POST.get('code', ''),
+        'custom_input': request.POST.get('custom_input', ''),
+    }
+
+    return render(request, 'problem_detail.html', context)
+
+
 @login_required
 def profile_view(request):
     submissions = CodeSubmission.objects.filter(user=request.user).order_by('-created_at')
-    
-    return render(request, 'profile.html', {
-        'submissions': submissions,
-    })
+    return render(request, 'profile.html', {'submissions': submissions})
 
-
-def index(request):
-    # Just render the submit/index.html page
-    return render(request, 'index.html')
-
-@login_required(login_url='/auth/login/')
+@login_required
 def submit(request):
     if request.method == "POST":
         language = request.POST.get("language")
@@ -43,24 +93,23 @@ def submit(request):
 
         if not language or not code:
             error = "Language and code are required."
-            return render(request, "sindex.html", {
+            return render(request, "index.html", {
                 "error": error,
                 "language": language,
                 "code": code,
                 "input_data": input_data
             })
 
-        output, errors = run_code(language, code, input_data or "")
+        output, errors = run_code(language, code, input_data)
 
-        # Save submission linked to user
         submission = CodeSubmission.objects.create(
-    user=request.user,
-    language=language,
-    code=code,
-    input_data=input_data,
-    output=output,  
-    errors=errors
-)
+            user=request.user,
+            language=language,
+            code=code,
+            input_data=input_data,
+            output=output,
+            errors=errors
+        )
 
         return render(request, "index.html", {
             "submission": submission,
@@ -71,7 +120,6 @@ def submit(request):
             "errors": errors,
         })
 
-    # GET request - render blank form
     return render(request, "index.html")
 
 def logout_user(request):
@@ -88,8 +136,7 @@ def run_code(language, code, input_data):
 
     unique = str(uuid.uuid4())
     input_file_path = inputs_dir / f"{unique}.txt"
-    with open(input_file_path, "w") as f:
-        f.write(input_data)
+    input_file_path.write_text(input_data)
 
     output = ""
     errors = ""
@@ -98,65 +145,100 @@ def run_code(language, code, input_data):
         if language == "cpp":
             code_file = codes_dir / f"{unique}.cpp"
             exec_file = codes_dir / unique
-            with open(code_file, "w") as f:
-                f.write(code)
-            compile_proc = subprocess.run(["clang++", str(code_file), "-o", str(exec_file)],
-                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
-            if compile_proc.returncode != 0:
-                return "", compile_proc.stderr
+            code_file.write_text(code)
 
-            run_proc = subprocess.run([str(exec_file)], stdin=open(input_file_path),
-                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
-            output = run_proc.stdout
-            errors = run_proc.stderr
+            compile_proc = subprocess.run(
+                ["clang++", str(code_file), "-o", str(exec_file)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, timeout=10
+            )
+            if compile_proc.returncode != 0:
+                return "", compile_proc.stderr.strip()
+
+            with open(input_file_path, "r") as input_file:
+                run_proc = subprocess.run(
+                    [str(exec_file)],
+                    stdin=input_file,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=5
+                )
+            output = run_proc.stdout.strip()
+            errors = run_proc.stderr.strip()
             os.remove(exec_file)
             os.remove(code_file)
 
         elif language == "c":
             code_file = codes_dir / f"{unique}.c"
             exec_file = codes_dir / unique
-            with open(code_file, "w") as f:
-                f.write(code)
-            compile_proc = subprocess.run(["clang", str(code_file), "-o", str(exec_file)],
-                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
-            if compile_proc.returncode != 0:
-                return "", compile_proc.stderr
+            code_file.write_text(code)
 
-            run_proc = subprocess.run([str(exec_file)], stdin=open(input_file_path),
-                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
-            output = run_proc.stdout
-            errors = run_proc.stderr
+            compile_proc = subprocess.run(
+                ["clang", str(code_file), "-o", str(exec_file)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, timeout=10
+            )
+            if compile_proc.returncode != 0:
+                return "", compile_proc.stderr.strip()
+
+            with open(input_file_path, "r") as input_file:
+                run_proc = subprocess.run(
+                    [str(exec_file)],
+                    stdin=input_file,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=5
+                )
+            output = run_proc.stdout.strip()
+            errors = run_proc.stderr.strip()
             os.remove(exec_file)
             os.remove(code_file)
 
         elif language == "py":
             code_file = codes_dir / f"{unique}.py"
-            with open(code_file, "w") as f:
-                f.write(code)
+            code_file.write_text(code)
+
             normalized_input = input_data.replace('\r\n', '\n').rstrip() + '\n'
-            run_proc = subprocess.run(["python3", str(code_file)], input=normalized_input,
-                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
-            output = run_proc.stdout
-            errors = run_proc.stderr
+            run_proc = subprocess.run(
+                ["python3", str(code_file)],
+                input=normalized_input,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=5
+            )
+            output = run_proc.stdout.strip()
+            errors = run_proc.stderr.strip()
             os.remove(code_file)
 
         elif language == "java":
             class_name = f"Main_{unique.replace('-', '_')}"
             code_file = codes_dir / f"{class_name}.java"
             code = code.replace("public class Main", f"public class {class_name}")
-            with open(code_file, "w") as f:
-                f.write(code)
+            code_file.write_text(code)
 
-            compile_proc = subprocess.run(["javac", str(code_file)],
-                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+            compile_proc = subprocess.run(
+                ["javac", str(code_file)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, timeout=10
+            )
             if compile_proc.returncode != 0:
-                return "", compile_proc.stderr
+                return "", compile_proc.stderr.strip()
 
-            run_proc = subprocess.run(["java", "-cp", str(codes_dir), class_name],
-                                      stdin=open(input_file_path), stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE, text=True, timeout=5)
-            output = run_proc.stdout
-            errors = run_proc.stderr
+            with open(input_file_path, "r") as input_file:
+                run_proc = subprocess.run(
+                    ["java", "-cp", str(codes_dir), class_name],
+                    stdin=input_file,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=5
+                )
+            output = run_proc.stdout.strip()
+            errors = run_proc.stderr.strip()
+
             class_file = codes_dir / f"{class_name}.class"
             if class_file.exists():
                 os.remove(class_file)

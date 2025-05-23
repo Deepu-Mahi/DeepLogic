@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Profile - Online Judge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -21,7 +21,8 @@
       box-shadow: 0 2px 10px #00bfff55;
     }
 
-    .navbar .left-nav, .navbar .right-nav {
+    .navbar .left-nav,
+    .navbar .right-nav {
       display: flex;
       align-items: center;
     }
@@ -45,6 +46,9 @@
       flex-direction: column;
       align-items: center;
       padding-top: 80px;
+      width: 90%;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     .welcome-box {
@@ -62,8 +66,15 @@
       font-size: 1.2em;
     }
 
-    .btn-compiler {
+    .button-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
       margin-top: 30px;
+    }
+
+    .btn-compiler {
       padding: 12px 25px;
       font-size: 1.1em;
       background: linear-gradient(45deg, #00bfff, #1e90ff);
@@ -87,7 +98,7 @@
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 15px #00bfff44;
-      width: 90%;
+      width: 100%;
       max-width: 600px;
       margin-top: 30px;
       display: none;
@@ -104,10 +115,71 @@
       border-bottom: 1px solid #00bfff33;
       padding-bottom: 5px;
     }
+
+    /* Recent submissions table styles */
+    .submissions-section {
+      width: 100%;
+      max-width: 900px;
+      display: none;
+    }
+
+    h2.submissions-title {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 2em;
+      text-shadow: 0 0 15px #00bfff;
+    }
+
+    table.submissions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      color: #00bfff;
+      font-size: 0.95em;
+      font-family: 'Fira Code', monospace;
+    }
+
+    table.submissions-table th,
+    table.submissions-table td {
+      border: 1px solid #00bfff88;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    table.submissions-table th {
+      background-color: #111;
+      color: #00e5ff;
+    }
+
+    table.submissions-table tbody tr:nth-child(even) {
+      background-color: rgba(0, 191, 255, 0.1);
+    }
+
+    a.problem-link {
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a.problem-link:hover {
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
+      transform: scale(1.05);
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .status-passed {
+      color: #0f0;
+      font-weight: bold;
+    }
+
+    .status-failed {
+      color: #f00;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-
   <div class="navbar">
     <div class="left-nav">
       <a id="profileBtn">Profile</a>
@@ -121,33 +193,80 @@
   <div class="container">
     <div class="welcome-box">
       <h1>Welcome, {{ user.username }}</h1>
-      <p>Ready to code? Launch the compiler below 👇</p>
+      <p>Ready to code? Choose an option below 👇</p>
     </div>
 
-    <a href="{% url 'submit' %}">
-      <button class="btn-compiler">Go to Compiler</button>
-    </a>
+    <div class="button-group">
+      <a href="{% url 'problem_list' %}">
+        <button class="btn-compiler">View Problems</button>
+      </a>
+      <a href="{% url 'submit' %}">
+        <button class="btn-compiler">Go to Compiler</button>
+      </a>
+    </div>
 
-    <!-- Hidden Card -->
+    <!-- Hidden Card: User Info -->
     <div class="card" id="profileCard">
       <h3>Your Account Info</h3>
       <p><strong>Username:</strong> {{ user.username }}</p>
       <p><strong>Email:</strong> {{ user.email|default:"Not set" }}</p>
       <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
     </div>
+
+    <!-- Recent Submissions -->
+    <div class="submissions-section" id="submissionSection">
+      <h2 class="submissions-title">Recent Submissions</h2>
+      {% if submissions %}
+      <table class="submissions-table">
+        <thead>
+          <tr>
+            <th>Problem</th>
+            <th>Language</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sub in submissions %}
+          <tr>
+            <td>
+              {% if sub.problem %}
+              <a href="{% url 'problem_detail' sub.problem.id %}" class="problem-link">
+                {{ sub.problem.title }}
+              </a>
+              {% else %}
+              <span class="problem-link">No problem linked</span>
+              {% endif %}
+            </td>
+            <td>{{ sub.language|upper }}</td>
+            <td>
+              {% if sub.errors %}
+              <span class="status-failed">Failed</span>
+              {% else %}
+              <span class="status-passed">Passed</span>
+              {% endif %}
+            </td>
+            <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p style="text-align:center; margin-top:20px;">No submissions yet.</p>
+      {% endif %}
+    </div>
   </div>
 
   <script>
     const profileBtn = document.getElementById("profileBtn");
     const profileCard = document.getElementById("profileCard");
+    const submissionSection = document.getElementById("submissionSection");
 
     profileBtn.addEventListener("click", () => {
-      profileCard.style.display =
-        profileCard.style.display === "none" || profileCard.style.display === ""
-          ? "block"
-          : "none";
+      const show = profileCard.style.display === "none" || profileCard.style.display === "";
+      profileCard.style.display = show ? "block" : "none";
+      submissionSection.style.display = show ? "block" : "none";
     });
   </script>
-
 </body>
 </html>
