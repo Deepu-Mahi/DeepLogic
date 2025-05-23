@@ -1,11 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User  
 
 class CodeSubmission(models.Model):
-    language = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # <-- This line must exist
+    language = models.CharField(max_length=20)
     code = models.TextField()
-    input_data = models.TextField(null=True, blank=True)
-    output_data = models.TextField(null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    input_data = models.TextField(blank=True, null=True)
+    output = models.TextField(blank=True, null=True)
+    errors = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 

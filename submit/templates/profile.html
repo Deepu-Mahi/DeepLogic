@@ -111,6 +111,7 @@
   <div class="navbar">
     <div class="left-nav">
       <a id="profileBtn">Profile</a>
+      <a href="{% url 'problem_list' %}">Problems</a>
     </div>
     <div class="right-nav">
       <a href="{% url 'logout' %}">Logout</a>
@@ -123,7 +124,7 @@
       <p>Ready to code? Launch the compiler below 👇</p>
     </div>
 
-    <a href="http://127.0.0.1:8000/submit/">
+    <a href="{% url 'submit' %}">
       <button class="btn-compiler">Go to Compiler</button>
     </a>
 

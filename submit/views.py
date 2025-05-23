@@ -2,15 +2,13 @@ import subprocess
 import uuid
 from pathlib import Path
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
 from submit.models import CodeSubmission
-import os
-from django.shortcuts import render, get_object_or_404
 from .models import Problem
-from django.contrib.auth.decorators import login_required
+import os
 
 @login_required
 def problem_list(request):
@@ -22,16 +20,19 @@ def problem_detail(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
     return render(request, 'problem_detail.html', {'problem': problem})
 
-
+@login_required
 @login_required
 def profile_view(request):
-    return render(request, "profile.html", {
-        "user": request.user
+    submissions = CodeSubmission.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'profile.html', {
+        'submissions': submissions,
     })
 
+
 def index(request):
-    # logic...
-    return render(request, 'submit/index.html')
+    # Just render the submit/index.html page
+    return render(request, 'index.html')
 
 @login_required(login_url='/auth/login/')
 def submit(request):
@@ -42,7 +43,7 @@ def submit(request):
 
         if not language or not code:
             error = "Language and code are required."
-            return render(request, "index.html", {
+            return render(request, "sindex.html", {
                 "error": error,
                 "language": language,
                 "code": code,
@@ -51,12 +52,15 @@ def submit(request):
 
         output, errors = run_code(language, code, input_data or "")
 
+        # Save submission linked to user
         submission = CodeSubmission.objects.create(
-            language=language,
-            code=code,
-            input_data=input_data,
-            output_data=(output if output else "") + ("\n\nErrors:\n" + errors if errors else "")
-        )
+    user=request.user,
+    language=language,
+    code=code,
+    input_data=input_data,
+    output=output,  
+    errors=errors
+)
 
         return render(request, "index.html", {
             "submission": submission,
@@ -70,12 +74,10 @@ def submit(request):
     # GET request - render blank form
     return render(request, "index.html")
 
-
 def logout_user(request):
     logout(request)
     messages.info(request, "Logout successful.")
     return redirect('/auth/login/')
-
 
 def run_code(language, code, input_data):
     project_path = Path(settings.BASE_DIR)

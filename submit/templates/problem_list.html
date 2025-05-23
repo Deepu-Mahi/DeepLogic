@@ -1,19 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
     <title>Problems List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 40px;
-            background-color: #f4f6f8;
+            font-family: 'Fira Code', monospace;
+            background-color: #000;
+            color: #00bfff;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #111;
+            box-shadow: 0 2px 10px #00bfff55;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar .left-nav,
+        .navbar .right-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: #00bfff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .navbar a:hover {
+            text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
+            transform: scale(1.05);
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #00bfff;
             margin-bottom: 30px;
+            text-shadow: 0 0 10px #00bfff99;
         }
 
         .problem-list {
@@ -25,60 +62,94 @@
         }
 
         .problem-card {
-            background-color: #ffffff;
+            background: rgba(0, 191, 255, 0.05);
+            border: 1px solid #00bfff;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px #00bfff44;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
         }
 
         .problem-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 0 20px #00bfffaa, 0 0 30px #00bfffcc;
+            background-color: rgba(0, 191, 255, 0.15);
         }
 
         .description {
-            color: #333;
+            color: #66cfff;
             margin: 10px 0;
         }
 
         .difficulty {
             color: #e74c3c;
             font-weight: bold;
+            text-shadow: 0 0 6px #e74c3c99;
         }
 
         .view-link {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             margin-top: 10px;
-            color: #2980b9;
+            color: #00bfff;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s ease;
         }
 
         .view-link:hover {
             text-decoration: underline;
+            color: #33c7ff;
+        }
+
+        /* Arrow icon */
+        .view-link::after {
+            content: "→";
+            margin-left: 6px;
+            font-weight: bold;
+            transition: margin-left 0.3s ease;
+        }
+
+        .view-link:hover::after {
+            margin-left: 12px;
         }
 
         .no-problems {
             text-align: center;
-            color: #777;
+            color: #444;
+            font-style: italic;
+            margin-top: 60px;
         }
     </style>
 </head>
 <body>
+
+    <div class="navbar">
+        <div class="left-nav">
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'problem_list' %}">Problems</a>
+            <a href="{% url 'submit' %}">Compiler</a>
+        </div>
+        <div class="right-nav">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+
     <h1>Available Problems</h1>
     {% if problems %}
     <div class="problem-list">
         {% for problem in problems %}
-        <div class="problem-card">
+        <div class="problem-card" tabindex="0" role="link" onclick="location.href='{% url 'problem_detail' problem.id %}'" onkeypress="if(event.key === 'Enter'){location.href='{% url 'problem_detail' problem.id %}';}">
             <p class="description">{{ problem.description|truncatewords:30 }}</p>
             <p class="difficulty">Difficulty: {{ problem.difficulty }}</p>
-            <a href="{% url 'problem_detail' problem.id %}" class="view-link">View Details &rarr;</a>
+            <a href="{% url 'problem_detail' problem.id %}" class="view-link">View Details</a>
         </div>
         {% endfor %}
     </div>
     {% else %}
     <p class="no-problems">No problems found.</p>
     {% endif %}
+
 </body>
 </html>
