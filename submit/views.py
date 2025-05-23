@@ -8,6 +8,19 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from submit.models import CodeSubmission
 import os
+from django.shortcuts import render, get_object_or_404
+from .models import Problem
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def problem_list(request):
+    problems = Problem.objects.all()
+    return render(request, 'problem_list.html', {'problems': problems})
+
+@login_required
+def problem_detail(request, problem_id):
+    problem = get_object_or_404(Problem, id=problem_id)
+    return render(request, 'problem_detail.html', {'problem': problem})
 
 
 @login_required
