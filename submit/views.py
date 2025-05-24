@@ -12,8 +12,28 @@ import os
 
 @login_required
 def problem_list(request):
+    query = request.GET.get('q', '')
+    difficulty = request.GET.get('difficulty', '')
+    topic = request.GET.get('topic', '')
+
     problems = Problem.objects.all()
-    return render(request, 'problem_list.html', {'problems': problems})
+
+    if query:
+        problems = problems.filter(description__icontains=query)
+
+    if difficulty:
+        problems = problems.filter(difficulty=difficulty)
+
+    if topic:
+        problems = problems.filter(topic=topic)
+
+    return render(request, 'problem_list.html', {
+        'problems': problems,
+        'query': query,
+        'selected_difficulty': difficulty,
+        'selected_topic': topic,
+    })
+
 
 @login_required
 def problem_detail(request, problem_id):

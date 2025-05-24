@@ -13,7 +13,6 @@
             color: #00bfff;
         }
 
-        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -51,6 +50,49 @@
             color: #00bfff;
             margin-bottom: 30px;
             text-shadow: 0 0 10px #00bfff99;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .search-container input[type="text"],
+        .search-container select {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #00bfff;
+            background-color: #111;
+            color: #00bfff;
+            font-family: 'Fira Code', monospace;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input[type="text"]:focus,
+        .search-container select:focus {
+            border-color: #33c7ff;
+            box-shadow: 0 0 10px #33c7ff88;
+            background-color: #0a0a0a;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #00bfff;
+            background-color: #00bfff;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #33c7ff;
         }
 
         .problem-list {
@@ -103,7 +145,6 @@
             color: #33c7ff;
         }
 
-        /* Arrow icon */
         .view-link::after {
             content: "→";
             margin-left: 6px;
@@ -128,7 +169,6 @@
     <div class="navbar">
         <div class="left-nav">
             <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'problem_list' %}">Problems</a>
             <a href="{% url 'submit' %}">Compiler</a>
         </div>
         <div class="right-nav">
@@ -137,12 +177,48 @@
     </div>
 
     <h1>Available Problems</h1>
+
+    <div class="search-container">
+        <form method="get" action="{% url 'problem_list' %}">
+            <input type="text" name="q" placeholder="Search problems..." value="{{ request.GET.q }}">
+            
+            <select name="difficulty">
+                <option value="">All</option>
+                <option value="Easy" {% if request.GET.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                <option value="Medium" {% if request.GET.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Hard" {% if request.GET.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+            </select>
+
+            <select name="topic">
+                <option value="">All</option>
+                <option value="Arrays" {% if request.GET.topic == 'Arrays' %}selected{% endif %}>Arrays</option>
+                <option value="Strings" {% if request.GET.topic == 'Strings' %}selected{% endif %}>Strings</option>
+                <option value="Dynamic Programming" {% if request.GET.topic == 'Dynamic Programming' %}selected{% endif %}>Dynamic Programming</option>
+                <option value="Graphs" {% if request.GET.topic == 'Graphs' %}selected{% endif %}>Graphs</option>
+                <option value="Greedy" {% if request.GET.topic == 'Greedy' %}selected{% endif %}>Greedy</option>
+                <option value="Math" {% if request.GET.topic == 'Math' %}selected{% endif %}>Math</option>
+                <option value="Sorting" {% if request.GET.topic == 'Sorting' %}selected{% endif %}>Sorting</option>
+                <option value="Searching" {% if request.GET.topic == 'Searching' %}selected{% endif %}>Searching</option>
+                <option value="Backtracking" {% if request.GET.topic == 'Backtracking' %}selected{% endif %}>Backtracking</option>
+                <option value="Trees" {% if request.GET.topic == 'Trees' %}selected{% endif %}>Trees</option>
+                <option value="Bit Manipulation" {% if request.GET.topic == 'Bit Manipulation' %}selected{% endif %}>Bit Manipulation</option>
+                <option value="Divide and Conquer" {% if request.GET.topic == 'Divide and Conquer' %}selected{% endif %}>Divide and Conquer</option>
+                <option value="Linked List" {% if request.GET.topic == 'Linked List' %}selected{% endif %}>Linked List</option>
+                <option value="Stacks and Queues" {% if request.GET.topic == 'Stacks and Queues' %}selected{% endif %}>Stacks and Queues</option>
+                <option value="Graphs - BFS/DFS" {% if request.GET.topic == 'Graphs - BFS/DFS' %}selected{% endif %}>Graphs - BFS/DFS</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
     {% if problems %}
     <div class="problem-list">
         {% for problem in problems %}
         <div class="problem-card" tabindex="0" role="link" onclick="location.href='{% url 'problem_detail' problem.id %}'" onkeypress="if(event.key === 'Enter'){location.href='{% url 'problem_detail' problem.id %}';}">
             <p class="description">{{ problem.description|truncatewords:30 }}</p>
             <p class="difficulty">Difficulty: {{ problem.difficulty }}</p>
+            <p class="difficulty">Topic: {{ problem.topic }}</p>
             <a href="{% url 'problem_detail' problem.id %}" class="view-link">View Details</a>
         </div>
         {% endfor %}
