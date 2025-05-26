@@ -10,143 +10,259 @@
       background: linear-gradient(135deg, #000 0%, #001d33 100%);
       color: #00bfff;
       margin: 40px auto;
-      max-width: 950px;
+      max-width: 95%;
       padding: 0 20px;
       line-height: 1.7;
+      user-select: text;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     h1 {
       text-align: center;
-      text-shadow: 0 0 15px #00bfff;
-      margin-bottom: 30px;
       font-size: 3em;
-      animation: glowPulse 3s ease-in-out infinite;
+      margin-bottom: 30px;
+      color: #00cfff;
+      text-shadow:
+        0 0 5px #00cfffaa,
+        0 0 10px #00dfff77,
+        0 0 15px #00efff55;
+      animation: glowPulse 4s ease-in-out infinite;
     }
 
     @keyframes glowPulse {
-      0%, 100% { text-shadow: 0 0 15px #00bfff; }
-      50% { text-shadow: 0 0 25px #00ffff; }
+      0%, 100% {
+        text-shadow:
+          0 0 5px #00cfffaa,
+          0 0 10px #00dfff77,
+          0 0 15px #00efff55;
+      }
+      50% {
+        text-shadow:
+          0 0 7px #00e0ffbb,
+          0 0 12px #00e0ff99,
+          0 0 18px #00f0ff77;
+      }
+    }
+
+    .main-container {
+      display: flex;
+      gap: 30px;
+      justify-content: space-between;
+      max-width: 100%;
+      height: 80vh;
+    }
+
+    .left-panel, .right-panel {
+      width: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow:
+        0 0 6px #00bfff55,
+        inset 0 0 10px #00cfff44;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #00bfff44 transparent;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .left-panel::-webkit-scrollbar,
+    .right-panel::-webkit-scrollbar {
+      width: 7px;
+    }
+    .left-panel::-webkit-scrollbar-track,
+    .right-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .left-panel::-webkit-scrollbar-thumb,
+    .right-panel::-webkit-scrollbar-thumb {
+      background-color: #00bfff66;
+      border-radius: 15px;
+      border: 2px solid transparent;
+      background-clip: content-box;
     }
 
     p, pre, textarea {
-      background-color: rgba(0,0,0,0.35);
+      background-color: rgba(0, 0, 0, 0.45);
       padding: 12px;
       border-radius: 10px;
-      margin: 12px auto;
-      color: #bbf0ff;
-      font-size: 1.1em;
-      max-width: 800px;
-      box-shadow: 0 0 10px #00bfff22;
+      margin: 10px 0;
+      color: #a3e8ff;
+      font-size: 1.05em;
+      box-shadow:
+        0 0 8px #00bfff33,
+        inset 0 0 10px #00bfff22;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      flex-shrink: 0;
     }
 
     h3 {
-      max-width: 800px;
-      margin: 40px auto 10px auto;
-      text-shadow: 0 0 8px #00ffff;
-      font-size: 1.5em;
+      margin: 20px 0 10px;
+      font-size: 1.4em;
+      color: #00cfff;
+      text-shadow:
+        0 0 4px #00bfffaa,
+        0 0 8px #00cfff77;
+      flex-shrink: 0;
     }
 
     textarea {
       width: 100%;
-      height: 220px;
+      height: 200px;
       resize: vertical;
       font-family: 'Fira Code', monospace;
-      color: #00f0ff;
-      background-color: #000b1d;
-      border: 1px solid #00bfff66;
-      box-shadow: 0 0 15px #00bfff33;
-      transition: all 0.3s ease;
+      color: #00d0ff;
+      background-color: #001728;
+      border: 1px solid #00a0cc88;
+      box-shadow:
+        0 0 10px #00a0cc44,
+        inset 0 0 10px #00bfff66;
+      transition: all 0.25s ease;
+      text-align: left;
     }
 
     textarea:focus {
       outline: none;
-      border-color: #00ffff;
-      box-shadow: 0 0 25px #00ffff88;
+      border-color: #00ccffaa;
+      box-shadow:
+        0 0 15px #00ccffbb,
+        inset 0 0 15px #00ccffcc;
     }
 
     select, button {
       font-family: 'Fira Code', monospace;
       font-size: 1em;
-      margin: 10px auto;
-      display: block;
-      padding: 12px 20px;
-      background: #001d33;
-      color: #00e1ff;
-      border: 1px solid #00bfff88;
-      border-radius: 6px;
-      box-shadow: 0 0 10px #00bfff55;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #004466;
+      margin: 8px 0;
+      padding: 10px 18px;
+      background: #001a2a;
+      color: #00cfff;
+      border: 1px solid #0099ccaa;
+      border-radius: 7px;
+      box-shadow:
+        0 0 6px #0099cc88;
+      transition: background-color 0.25s ease, box-shadow 0.25s ease;
       cursor: pointer;
-      box-shadow: 0 0 20px #00ffffaa;
+      user-select: none;
     }
 
-    .test-result {
-      background-color: #080820;
-      border-left: 5px solid;
-      border-radius: 10px;
-      margin: 15px auto;
-      padding: 15px;
-      max-width: 800px;
-      box-shadow: 0 0 15px rgba(0, 191, 255, 0.1);
-      animation: fadeIn 0.6s ease-in-out;
+    button:hover, select:hover {
+      background-color: #00364d;
+      box-shadow:
+        0 0 12px #00bbffcc,
+        0 0 18px #00bbffcc;
     }
 
-    .Passed {
-      border-color: #00ff88;
-      box-shadow: 0 0 10px #00ff8855;
-    }
-
-    .Failed {
-      border-color: #ff5555;
-      box-shadow: 0 0 10px #ff555555;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .back-link {
-      display: block;
-      max-width: 800px;
-      margin: 50px auto;
-      text-align: center;
-      color: #00e1ff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.2em;
-      transition: text-shadow 0.3s;
-    }
-
-    .back-link:hover {
-      text-shadow: 0 0 10px #00ffff, 0 0 15px #00bfff;
-    }
-
-    label {
-      display: block;
-      text-align: center;
-      font-size: 1.1em;
-      margin: 15px auto 5px;
-      color: #66ccff;
-    }
-
-    form {
-      background-color: rgba(0, 0, 0, 0.15);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #00bfff33;
-      max-width: 800px;
-      margin: 20px auto 40px;
+    button:active {
+      box-shadow:
+        0 0 8px #0088cccc inset;
+      background-color: #002f43;
     }
 
     .btn-group {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
+      margin-top: 12px;
+      flex-shrink: 0;
+    }
+
+    /* --- Updated test-result styling --- */
+    .test-result {
+      background-color: #0a0a15;
+      border-left: 6px solid;
+      border-radius: 8px;
+      margin: 18px auto;
+      padding: 15px 20px 15px 20px;
+      /* Remove all box-shadow except subtle inset if desired */
+      box-shadow: inset 1px 0 4px rgba(255, 255, 255, 0.1);
+      color: #b2e5ff;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      position: relative;
+    }
+
+    /* Left side glowing vertical bar */
+    .test-result::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 6px; /* same width as border-left */
+      border-radius: 8px 0 0 8px;
+      background-color: currentColor;
+      filter: drop-shadow(-2px 0 6px currentColor);
+      z-index: -1;
+      opacity: 1;
+    }
+
+    .Passed {
+      border-color: #00bb77;
+      color: #a6f5b6;
+      background-color: #003b22cc;
+    }
+    .Passed::before {
+      background-color: #00bb77;
+      filter: drop-shadow(-2px 0 6px #00bb77);
+    }
+
+    .Failed {
+      border-color: #cc4444;
+      color: #ff9a9a;
+      background-color: #440000cc;
+    }
+    .Failed::before {
+      background-color: #cc4444;
+      filter: drop-shadow(-2px 0 6px #cc4444);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .back-link {
+      display: block;
+      margin: 45px auto 0;
+      text-align: center;
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.15em;
+      transition: text-shadow 0.25s;
+      user-select: none;
+    }
+
+    .back-link:hover {
+      text-shadow:
+        0 0 8px #00cfffaa,
+        0 0 12px #0099ccaa;
+    }
+
+    label {
+      display: block;
+      font-size: 1.05em;
+      margin: 12px 0 4px;
+      color: #66bbff;
+      user-select: none;
+    }
+
+    form {
+      background-color: rgba(0, 0, 0, 0.35);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow:
+        0 0 15px #0099cc44,
+        inset 0 0 25px #0099cc55;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -154,46 +270,54 @@
 
   <h1>{{ problem.title }}</h1>
 
-  <p>{{ problem.description|linebreaks }}</p>
+  <div class="main-container">
 
-  <h3>Input Format</h3>
-  <pre>{{ problem.input_format }}</pre>
+    <div class="left-panel">
+      <p>{{ problem.description|linebreaks }}</p>
 
-  <h3>Output Format</h3>
-  <pre>{{ problem.output_format }}</pre>
+      <h3>Input Format</h3>
+      <pre>{{ problem.input_format }}</pre>
 
-  <h3>Try Your Code</h3>
-  <form method="post">
-    {% csrf_token %}
-    <label>
-      Language:
-      <select name="language">
-        <option value="py" {% if posted_language == "py" %}selected{% endif %}>Python</option>
-        <option value="cpp" {% if posted_language == "cpp" %}selected{% endif %}>C++</option>
-        <option value="c" {% if posted_language == "c" %}selected{% endif %}>C</option>
-        <option value="java" {% if posted_language == "java" %}selected{% endif %}>Java</option>
-      </select>
-    </label>
-
-    <label>
-      Code:
-      <textarea name="code" placeholder="Write your code here...">{{ posted_code }}</textarea>
-    </label>
-
-    <label>
-      Custom Input (used for "Run Code" only):
-      <textarea name="custom_input" placeholder="Enter custom input...">{{ custom_input }}</textarea>
-    </label>
-
-    <div class="btn-group">
-      <button type="submit" name="action" value="run">Run Code</button>
-      <button type="submit" name="action" value="submit">Submit</button>
+      <h3>Output Format</h3>
+      <pre>{{ problem.output_format }}</pre>
     </div>
-  </form>
+
+    <div class="right-panel">
+      <h3>Try Your Code</h3>
+      <form method="post">
+        {% csrf_token %}
+        <label>
+          Language:
+          <select name="language">
+            <option value="py" {% if posted_language == "py" %}selected{% endif %}>Python</option>
+            <option value="cpp" {% if posted_language == "cpp" %}selected{% endif %}>C++</option>
+            <option value="c" {% if posted_language == "c" %}selected{% endif %}>C</option>
+            <option value="java" {% if posted_language == "java" %}selected{% endif %}>Java</option>
+          </select>
+        </label>
+
+        <label>
+          Code:
+          <textarea name="code" placeholder="Write your code here...">{{ posted_code }}</textarea>
+        </label>
+
+        <label>
+          Custom Input (used for "Run Code" only):
+          <textarea name="custom_input" placeholder="Enter custom input...">{{ custom_input }}</textarea>
+        </label>
+
+        <div class="btn-group">
+          <button type="submit" name="action" value="run">Run Code</button>
+          <button type="submit" name="action" value="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
 
   {% if raw_output or raw_errors %}
     <h3>Run Result</h3>
-    <div class="test-result">
+    <div class="test-result" style="border-left-color:#00bfff; color:#b2e5ff; background-color:#002a44cc;">
       {% if raw_output %}
         <strong>Your Output:</strong><br/><pre>{{ raw_output }}</pre>
       {% endif %}
