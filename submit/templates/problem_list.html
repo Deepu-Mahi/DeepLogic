@@ -5,192 +5,347 @@
     <title>Problems List</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
     <style>
+        /* Reset & basics */
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
-            padding: 40px;
+            padding: 40px 20px;
             font-family: 'Fira Code', monospace;
-            background-color: #000;
+            background-color: #010a14;
             color: #00bfff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
-            background-color: #111;
+            background-color: #111622;
             box-shadow: 0 2px 10px #00bfff55;
             position: sticky;
             top: 0;
+            width: 100%;
+            max-width: 900px;
             z-index: 10;
+            border-radius: 0 0 12px 12px;
         }
 
         .navbar .left-nav,
         .navbar .right-nav {
             display: flex;
             align-items: center;
+            gap: 20px;
         }
 
         .navbar a {
             color: #00bfff;
             text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-            transition: all 0.2s;
-            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            user-select: none;
         }
 
-        .navbar a:hover {
-            text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff;
-            transform: scale(1.05);
+        .navbar a:hover,
+        .navbar a:focus {
+            text-shadow: 0 0 8px #00bfff, 0 0 15px #00bfff;
+            background-color: #002f55;
+            outline: none;
+            transform: scale(1.08);
         }
 
+        /* Heading */
         h1 {
+            margin: 30px 0 25px;
+            font-weight: 900;
+            font-size: 2.4rem;
             text-align: center;
-            color: #00bfff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #00bfff99;
+            text-shadow: 0 0 15px #00bfffaa;
+            letter-spacing: 2px;
+            max-width: 900px;
+            width: 100%;
         }
 
-        .search-container {
+        /* Search container */
+        .search-container form {
             display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            max-width: 900px;
+            width: 100%;
+            background-color: #111822;
+            padding: 18px 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px #00bfff44;
         }
 
+        /* Input and selects */
         .search-container input[type="text"],
         .search-container select {
-            padding: 10px 15px;
-            border-radius: 6px;
-            border: 1px solid #00bfff;
-            background-color: #111;
-            color: #00bfff;
+            flex: 1 1 180px;
+            min-width: 150px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1.5px solid #00bfff;
+            background-color: #0a1220;
+            color: #00d4ff;
+            font-size: 1rem;
             font-family: 'Fira Code', monospace;
-            outline: none;
             transition: all 0.3s ease;
+            outline-offset: 2px;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: #33c7ffaa;
         }
 
         .search-container input[type="text"]:focus,
         .search-container select:focus {
             border-color: #33c7ff;
-            box-shadow: 0 0 10px #33c7ff88;
-            background-color: #0a0a0a;
+            box-shadow: 0 0 12px #33c7ffcc;
+            background-color: #061021;
+            color: #a0eaff;
         }
 
+        /* Search button */
         .search-container button {
-            padding: 10px 15px;
-            border-radius: 6px;
-            border: 1px solid #00bfff;
-            background-color: #00bfff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(45deg, #00bfff, #33c7ff);
             color: #000;
-            font-weight: bold;
+            font-weight: 900;
+            font-size: 1rem;
             cursor: pointer;
-            transition: 0.3s;
+            user-select: none;
+            box-shadow: 0 0 15px #33c7ffbb;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
         }
 
-        .search-container button:hover {
-            background-color: #33c7ff;
+        .search-container button:hover,
+        .search-container button:focus {
+            background: linear-gradient(45deg, #33c7ff, #00bfff);
+            box-shadow: 0 0 22px #00bfffdd;
+            outline: none;
         }
 
+        /* Problems list */
         .problem-list {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            margin: auto;
+            gap: 24px;
+            margin-top: 30px;
+            max-width: 900px;
+            width: 100%;
+            padding-bottom: 60px;
         }
 
+        /* Individual problem card */
         .problem-card {
-            background: rgba(0, 191, 255, 0.05);
-            border: 1px solid #00bfff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 0 15px #00bfff44;
+            background: rgba(0, 191, 255, 0.08);
+            border: 1.8px solid #00bfff;
+            border-radius: 14px;
+            padding: 22px 28px;
+            box-shadow: 0 0 22px #00bfff44;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                background-color 0.3s ease;
+            outline-offset: 4px;
+            user-select: none;
+        }
+        .problem-card:hover,
+        .problem-card:focus-visible {
+            transform: translateY(-6px);
+            box-shadow: 0 0 32px #00bfffcc, 0 0 40px #00bfffdd;
+            background-color: rgba(0, 191, 255, 0.20);
+            outline: none;
         }
 
-        .problem-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 0 20px #00bfffaa, 0 0 30px #00bfffcc;
-            background-color: rgba(0, 191, 255, 0.15);
-        }
-
+        /* Description text */
         .description {
-            color: #66cfff;
-            margin: 10px 0;
+            color: #8bd1ff;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            margin-bottom: 18px;
+            flex-grow: 1;
+            user-select: text;
         }
 
+        /* Difficulty and topic container */
+        .tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        /* Difficulty badge */
         .difficulty {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+            text-shadow: 0 0 8px #000;
+            user-select: none;
+        }
+        .difficulty.Easy {
+            background-color: #27ae6011;
+            border: 1.5px solid #27ae60;
+            color: #27ae60;
+            text-shadow: 0 0 6px #27ae60aa;
+        }
+        .difficulty.Medium {
+            background-color: #f39c1211;
+            border: 1.5px solid #f39c12;
+            color: #f39c12;
+            text-shadow: 0 0 6px #f39c12aa;
+        }
+        .difficulty.Hard {
+            background-color: #e74c3c11;
+            border: 1.5px solid #e74c3c;
             color: #e74c3c;
-            font-weight: bold;
-            text-shadow: 0 0 6px #e74c3c99;
+            text-shadow: 0 0 6px #e74c3caa;
         }
 
+        /* Topic badge */
+        .topic {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: #00486b;
+            color: #33c7ff;
+            box-shadow: 0 0 8px #00bfffaa inset;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        /* View Details link */
         .view-link {
+            align-self: flex-start;
             display: inline-flex;
             align-items: center;
-            margin-top: 10px;
             color: #00bfff;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: auto;
+            user-select: none;
             transition: color 0.3s ease;
         }
-
-        .view-link:hover {
-            text-decoration: underline;
+        .view-link:hover,
+        .view-link:focus {
             color: #33c7ff;
+            text-decoration: underline;
+            outline: none;
         }
-
         .view-link::after {
             content: "→";
             margin-left: 6px;
-            font-weight: bold;
+            font-weight: 900;
             transition: margin-left 0.3s ease;
         }
-
-        .view-link:hover::after {
+        .view-link:hover::after,
+        .view-link:focus::after {
             margin-left: 12px;
         }
 
+        /* No problems found */
         .no-problems {
-            text-align: center;
-            color: #444;
-            font-style: italic;
             margin-top: 60px;
+            font-style: italic;
+            color: #666;
+            font-size: 1.15rem;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 720px) {
+            .navbar {
+                padding: 12px 15px;
+            }
+            .navbar .left-nav,
+            .navbar .right-nav {
+                gap: 12px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .search-container form {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            .search-container input[type="text"],
+            .search-container select {
+                flex: 1 1 100%;
+                min-width: auto;
+            }
+            .search-container button {
+                width: 100%;
+            }
+            .problem-card {
+                padding: 18px 20px;
+            }
+            .description {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Primary navigation">
         <div class="left-nav">
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'submit' %}">Compiler</a>
+            <a href="{% url 'profile' %}" tabindex="0">Profile</a>
+            <a href="{% url 'submit' %}" tabindex="0">Compiler</a>
         </div>
         <div class="right-nav">
-            <a href="{% url 'logout' %}">Logout</a>
+            <a href="{% url 'logout' %}" tabindex="0">Logout</a>
         </div>
-    </div>
+    </nav>
 
     <h1>Available Problems</h1>
 
     <div class="search-container">
-        <form method="get" action="{% url 'problem_list' %}">
-            <input type="text" name="q" placeholder="Search problems..." value="{{ request.GET.q }}">
-            
-            <select name="difficulty">
-                <option value="">All</option>
+        <form method="get" action="{% url 'problem_list' %}" role="search" aria-label="Search problems">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search problems..."
+                aria-label="Search problems"
+                value="{{ request.GET.q|default_if_none:'' }}"
+            />
+
+            <select name="difficulty" aria-label="Filter by difficulty">
+                <option value="">All Difficulties</option>
                 <option value="Easy" {% if request.GET.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
                 <option value="Medium" {% if request.GET.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
                 <option value="Hard" {% if request.GET.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
             </select>
 
-            <select name="topic">
-                <option value="">All</option>
+            <select name="topic" aria-label="Filter by topic">
+                <option value="">All Topics</option>
                 <option value="Arrays" {% if request.GET.topic == 'Arrays' %}selected{% endif %}>Arrays</option>
                 <option value="Strings" {% if request.GET.topic == 'Strings' %}selected{% endif %}>Strings</option>
                 <option value="Dynamic Programming" {% if request.GET.topic == 'Dynamic Programming' %}selected{% endif %}>Dynamic Programming</option>
@@ -208,23 +363,34 @@
                 <option value="Graphs - BFS/DFS" {% if request.GET.topic == 'Graphs - BFS/DFS' %}selected{% endif %}>Graphs - BFS/DFS</option>
             </select>
 
-            <button type="submit">Search</button>
+            <button type="submit" aria-label="Search problems">Search</button>
         </form>
     </div>
 
     {% if problems %}
-    <div class="problem-list">
+    <section class="problem-list" aria-live="polite" aria-relevant="additions removals">
         {% for problem in problems %}
-        <div class="problem-card" tabindex="0" role="link" onclick="location.href='{% url 'problem_detail' problem.id %}'" onkeypress="if(event.key === 'Enter'){location.href='{% url 'problem_detail' problem.id %}';}">
-            <p class="description">{{ problem.description|truncatewords:30 }}</p>
-            <p class="difficulty">Difficulty: {{ problem.difficulty }}</p>
-            <p class="difficulty">Topic: {{ problem.topic }}</p>
-            <a href="{% url 'problem_detail' problem.id %}" class="view-link">View Details</a>
-        </div>
+        <article
+            class="problem-card"
+            tabindex="0"
+            role="link"
+            aria-label="View problem details: {{ problem.description|truncatewords:8 }}"
+            onclick="location.href='{% url 'problem_detail' problem.id %}'"
+            onkeypress="if(event.key === 'Enter'){location.href='{% url 'problem_detail' problem.id %}';}"
+        >
+            <p class="description" aria-describedby="desc-{{ problem.id }}">{{ problem.description|truncatewords:30 }}</p>
+
+            <div class="tags">
+                <span class="difficulty {{ problem.difficulty }}">{{ problem.difficulty }}</span>
+                <span class="topic">{{ problem.topic }}</span>
+            </div>
+
+            <a href="{% url 'problem_detail' problem.id %}" class="view-link" tabindex="-1">View Details</a>
+        </article>
         {% endfor %}
-    </div>
+    </section>
     {% else %}
-    <p class="no-problems">No problems found.</p>
+    <p class="no-problems" role="alert">No problems found.</p>
     {% endif %}
 
 </body>

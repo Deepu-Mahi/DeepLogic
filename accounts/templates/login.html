@@ -92,6 +92,7 @@
       color: #fff !important;
       box-shadow: 0 0 8px #00bfff;
       border-color: #00bfff;
+      outline: none;
     }
 
     @keyframes popIn {
@@ -103,6 +104,34 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    /* Password input + toggle icon container */
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input.form-control {
+      padding-right: 2.8rem; /* space for toggle icon */
+      flex-grow: 1;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      cursor: pointer;
+      color: #00bfff;
+      font-size: 1.25rem;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-password:hover,
+    .toggle-password:focus {
+      color: #1ec5ff;
+      outline: none;
     }
   </style>
 </head>
@@ -122,32 +151,35 @@
       {% endif %}
 
       <div class="form-group">
-        <label for="exampleInputEmail1">Username</label>
+        <label for="usernameInput">Username</label>
         <input
           type="text"
           class="form-control"
           name="username"
-          id="exampleInputEmail1"
+          id="usernameInput"
           placeholder="Enter username"
           required
+          autocomplete="username"
+          aria-required="true"
         />
       </div>
 
       <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        <input
-          type="password"
-          name="password"
-          class="form-control"
-          id="exampleInputPassword1"
-          placeholder="Password"
-          required
-        />
-      </div>
-
-      <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="showPassword" />
-        <label class="form-check-label" for="showPassword">Show Password</label>
+        <label for="passwordInput">Password</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            name="password"
+            class="form-control"
+            id="passwordInput"
+            placeholder="Password"
+            required
+            autocomplete="current-password"
+            aria-required="true"
+            aria-describedby="togglePasswordDesc"
+          />
+          <span id="togglePassword" role="button" tabindex="0" aria-label="Toggle password visibility" class="toggle-password">&#128065;</span>
+        </div>
       </div>
 
       <p class="form-text mb-3">
@@ -159,13 +191,22 @@
   </div>
 
   <script>
-    const checkbox = document.getElementById('showPassword');
-    if (checkbox) {
-      checkbox.addEventListener('change', function () {
-        const passwordInput = document.getElementById('exampleInputPassword1');
-        passwordInput.type = this.checked ? 'text' : 'password';
-      });
-    }
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      togglePassword.textContent = type === 'password' ? '\u{1F441}' : '\u{1F576}'; // 👁️ or 🕶️
+    });
+
+    // Also support keyboard accessibility
+    togglePassword.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePassword.click();
+      }
+    });
   </script>
 </body>
 </html>

@@ -2,12 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Register</title>
-    <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
     <style>
       body {
@@ -91,6 +88,7 @@
         color: #fff !important;
         box-shadow: 0 0 8px #00bfff;
         border-color: #00bfff;
+        outline: none;
       }
 
       @keyframes popIn {
@@ -103,46 +101,81 @@
           transform: translateY(0);
         }
       }
+
+      /* Password input + toggle icon container */
+      .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-wrapper input.form-control {
+        padding-right: 2.8rem; /* space for toggle icon */
+        flex-grow: 1;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        cursor: pointer;
+        color: #00bfff;
+        font-size: 1.25rem;
+        user-select: none;
+        transition: color 0.3s ease;
+      }
+
+      .toggle-password:hover,
+      .toggle-password:focus {
+        color: #1ec5ff;
+        outline: none;
+      }
     </style>
   </head>
   <body>
     <div class="register-card">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-
         <h3>Register</h3>
         <hr />
 
         {% if messages %}
-        <div class="alert alert-primary" role="alert">
-          {% for message in messages %}
-            {{ message }}
-          {% endfor %}
-        </div>
+          <div class="alert alert-primary" role="alert">
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          </div>
         {% endif %}
 
         <div class="form-group">
-          <label for="exampleInputEmail1">Username</label>
+          <label for="usernameInput">Username</label>
           <input
             type="text"
             class="form-control"
             name="username"
-            id="exampleInputEmail1"
+            id="usernameInput"
             placeholder="Enter username"
             required
+            autocomplete="username"
+            aria-required="true"
           />
         </div>
 
         <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            id="exampleInputPassword1"
-            placeholder="Password"
-            required
-          />
+          <label for="passwordInput">Password</label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              id="passwordInput"
+              placeholder="Password"
+              required
+              autocomplete="new-password"
+              aria-required="true"
+              aria-describedby="togglePasswordDesc"
+            />
+            <span id="togglePassword" role="button" tabindex="0" aria-label="Toggle password visibility" class="toggle-password">&#128065;</span>
+          </div>
         </div>
 
         <p class="form-text mb-3">
@@ -152,5 +185,24 @@
         <button type="submit" class="btn btn-primary">Register</button>
       </form>
     </div>
+
+    <script>
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('passwordInput');
+
+      togglePassword.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        togglePassword.textContent = type === 'password' ? '\u{1F441}' : '\u{1F576}'; // 👁️ or 🕶️
+      });
+
+      // Keyboard accessibility for toggle
+      togglePassword.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          togglePassword.click();
+        }
+      });
+    </script>
   </body>
 </html>
