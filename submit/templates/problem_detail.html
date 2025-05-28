@@ -18,6 +18,53 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Navbar styles */
+    .navbar {
+      background-color: rgba(0, 17, 34, 0.85);
+      border-bottom: 1px solid #00557788;
+      box-shadow: 0 2px 10px #0077aa33;
+      padding: 12px 24px;
+      margin-bottom: 30px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  gap: 30px;
+}
+
+
+    .nav-link {
+      color: #00cfff;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.05em;
+      transition: color 0.25s, text-shadow 0.25s;
+    }
+
+    .nav-link:hover {
+      text-shadow: 0 0 8px #00e0ffcc;
+      color: #66e8ff;
+    }
+
+    .logout-link {
+      color: #ff7777;
+    }
+
+    .logout-link:hover {
+      color: #ffaaaa;
+      text-shadow: 0 0 8px #ff9999cc;
+    }
+
     h1 {
       text-align: center;
       font-size: 3em;
@@ -72,10 +119,12 @@
     .right-panel::-webkit-scrollbar {
       width: 7px;
     }
+
     .left-panel::-webkit-scrollbar-track,
     .right-panel::-webkit-scrollbar-track {
       background: transparent;
     }
+
     .left-panel::-webkit-scrollbar-thumb,
     .right-panel::-webkit-scrollbar-thumb {
       background-color: #00bfff66;
@@ -157,8 +206,7 @@
     }
 
     button:active {
-      box-shadow:
-        0 0 8px #0088cccc inset;
+      box-shadow: 0 0 8px #0088cccc inset;
       background-color: #002f43;
     }
 
@@ -170,14 +218,12 @@
       flex-shrink: 0;
     }
 
-    /* --- Updated test-result styling --- */
     .test-result {
       background-color: #0a0a15;
       border-left: 6px solid;
       border-radius: 8px;
       margin: 18px auto;
-      padding: 15px 20px 15px 20px;
-      /* Remove all box-shadow except subtle inset if desired */
+      padding: 15px 20px;
       box-shadow: inset 1px 0 4px rgba(255, 255, 255, 0.1);
       color: #b2e5ff;
       font-size: 0.95em;
@@ -186,14 +232,13 @@
       position: relative;
     }
 
-    /* Left side glowing vertical bar */
     .test-result::before {
       content: "";
       position: absolute;
       left: 0;
       top: 0;
       height: 100%;
-      width: 6px; /* same width as border-left */
+      width: 6px;
       border-radius: 8px 0 0 8px;
       background-color: currentColor;
       filter: drop-shadow(-2px 0 6px currentColor);
@@ -206,6 +251,7 @@
       color: #a6f5b6;
       background-color: #003b22cc;
     }
+
     .Passed::before {
       background-color: #00bb77;
       filter: drop-shadow(-2px 0 6px #00bb77);
@@ -216,14 +262,10 @@
       color: #ff9a9a;
       background-color: #440000cc;
     }
+
     .Failed::before {
       background-color: #cc4444;
       filter: drop-shadow(-2px 0 6px #cc4444);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .back-link {
@@ -239,9 +281,7 @@
     }
 
     .back-link:hover {
-      text-shadow:
-        0 0 8px #00cfffaa,
-        0 0 12px #0099ccaa;
+      text-shadow: 0 0 8px #00cfffaa, 0 0 12px #0099ccaa;
     }
 
     label {
@@ -256,9 +296,7 @@
       background-color: rgba(0, 0, 0, 0.35);
       padding: 20px;
       border-radius: 12px;
-      box-shadow:
-        0 0 15px #0099cc44,
-        inset 0 0 25px #0099cc55;
+      box-shadow: 0 0 15px #0099cc44, inset 0 0 25px #0099cc55;
       flex-grow: 1;
       display: flex;
       flex-direction: column;
@@ -267,6 +305,19 @@
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
+ <nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-left">
+      <a href="{% url 'problem_list' %}" class="nav-link">Problems</a>
+      <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+    </div>
+    <div class="navbar-right">
+      <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
+    </div>
+  </div>
+</nav>
 
   <h1>{{ problem.title }}</h1>
 
@@ -280,6 +331,13 @@
 
       <h3>Output Format</h3>
       <pre>{{ problem.output_format }}</pre>
+
+      <h3>Sample Input</h3>
+<pre>{{ problem.sample_input }}</pre>
+
+<h3>Sample Output</h3>
+<pre>{{ problem.sample_output }}</pre>
+
     </div>
 
     <div class="right-panel">
