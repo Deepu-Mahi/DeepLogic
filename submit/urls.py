@@ -7,6 +7,8 @@ from .views import (
     problem_list,
     problem_detail,
 )
+from .views import gemini_ai
+
 
 urlpatterns = [
     # Standalone compiler page (e.g., from profile)
@@ -21,6 +23,7 @@ urlpatterns = [
 
     # Problem details + code submission with test cases
     path('problems/<int:problem_id>/', login_required(problem_detail, login_url='/auth/login/'), name='problem_detail'),
+     path('gemini-ai/', gemini_ai, name='gemini_ai'),
 
     # Optional: You could add a dedicated submit URL for problems, but your design uses problem_detail POST for submission
     # So no separate 'submit' path under problems needed here

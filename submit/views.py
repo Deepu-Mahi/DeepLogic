@@ -13,16 +13,42 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
-from dotenv import load_dotenv
-
 from submit.models import CodeSubmission
 from .models import Problem
+from dotenv import load_dotenv
+import google.generativeai as genai
+from django.utils.html import escape
 
-# Load environment variables from .env
-load_dotenv()
 
-# Configure logging
-logger = logging.getLogger(__name__)
+
+genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ")  # Replace with your actual Gemini API key
+
+@csrf_exempt
+def gemini_ai(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            code = data.get('code', '')
+
+            # Build the prompt for Gemini to fix and improve the code
+            prompt = f"Fix any bugs and improve the following code:\n\n{code}"
+
+            # Initialize the model with the recommended Gemini 2.5 pro preview model
+            model = genai.GenerativeModel("models/gemini-1.5-pro")
+
+            # Call generate_content with the prompt
+            response = model.generate_content(prompt)
+
+            # Return the fixed/improved code text
+            return JsonResponse({'response': response.text})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    else:
+        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
+
+
 
 # -----------------------------
 # Compiler Page

@@ -34,14 +34,13 @@
       box-shadow: 0 4px 20px rgba(31, 111, 235, 0.1);
     }
 
-    .nav-left {
+    .nav-left,
+    .nav-right {
       display: flex;
       align-items: center;
     }
 
     .nav-right {
-      display: flex;
-      align-items: center;
       gap: 20px;
     }
 
@@ -168,17 +167,20 @@
     }
 
     .output-box {
-      background: #0d1117;
-      border: 1px solid #1f6feb;
-      border-radius: 10px;
-      padding: 20px;
-      white-space: pre-wrap;
-      font-size: 0.95rem;
-      margin-bottom: 20px;
-      color: #c9f1ff;
-      overflow-y: auto;
-      flex-grow: 1;
-    }
+  background: #0d1117;
+  border: 1px solid #1f6feb;
+  border-radius: 10px;
+  padding: 20px;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  color: #c9f1ff;
+  overflow-y: auto;
+  flex-grow: 1;
+
+  max-height: 320px; /* new: limit height to half */
+}
+
 
     .errors {
       color: #ff6b6b;
@@ -191,6 +193,18 @@
       font-weight: bold;
       margin-bottom: 20px;
     }
+
+    .ai-output-box {
+      background-color: #0d1117;
+  color: #c9f1ff;
+  border: 1px solid #1f6feb;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 0.95rem;
+  max-height: 250px;     /* Fixed height */
+  overflow-y: auto;      /* Enables vertical scrollbar */
+  margin-top: 10px;
+}
 
     @media (max-width: 960px) {
       .main {
@@ -210,7 +224,6 @@
       }
     }
 
-    /* LIGHT THEME STYLES */
     .light-theme {
       background: #f4f4f4;
       color: #1e1e1e;
@@ -259,6 +272,12 @@
       color: #dc3545;
       border-color: #dc3545;
     }
+
+    .light-theme .ai-output-box {
+      background: #f0f0f0;
+      color: #006400;
+      border-color: #28a745;
+    }
   </style>
 </head>
 <body>
@@ -281,43 +300,50 @@
   {% endif %}
 
   <form method="post" autocomplete="off" spellcheck="false">
-    {% csrf_token %}
-    <div class="main">
-      <div class="left-panel">
-        <label for="language">Language</label>
-        <select name="language" id="language" required>
-          <option value="py" {% if language == 'py' %}selected{% endif %}>Python</option>
-          <option value="cpp" {% if language == 'cpp' %}selected{% endif %}>C++</option>
-          <option value="c" {% if language == 'c' %}selected{% endif %}>C</option>
-          <option value="java" {% if language == 'java' %}selected{% endif %}>Java</option>
-        </select>
+  {% csrf_token %}
+  <div class="main">
+    <div class="left-panel">
+      <label for="language">Language</label>
+      <select name="language" id="language" required>
+        <option value="py" {% if language == 'py' %}selected{% endif %}>Python</option>
+        <option value="cpp" {% if language == 'cpp' %}selected{% endif %}>C++</option>
+        <option value="c" {% if language == 'c' %}selected{% endif %}>C</option>
+        <option value="java" {% if language == 'java' %}selected{% endif %}>Java</option>
+      </select>
 
-        <label for="code">Code</label>
-        <textarea id="code" name="code" placeholder="// Write your code here..." required>{{ code|default_if_none:"" }}</textarea>
+      <label for="code">Code</label>
+      <textarea id="code" name="code" placeholder="// Write your code here..." required>{{ code|default_if_none:"" }}</textarea>
 
-        <label for="input_data">Input (if any)</label>
-        <textarea class="input-box" id="input_data" name="input_data" placeholder="Enter input for your code...">{{ input_data|default_if_none:"" }}</textarea>
+      <label for="input_data">Input (if any)</label>
+      <textarea class="input-box" id="input_data" name="input_data" placeholder="Enter input for your code...">{{ input_data|default_if_none:"" }}</textarea>
 
-        <button type="submit">▶ Run Code</button>
-      </div>
-
-      <div class="right-panel">
-        {% if output %}
-          <div class="output-box">
-            <h3>Output:</h3>
-            <pre>{{ output }}</pre>
-          </div>
-        {% endif %}
-
-        {% if errors %}
-          <div class="output-box errors">
-            <h3>Errors:</h3>
-            <pre>{{ errors }}</pre>
-          </div>
-        {% endif %}
-      </div>
+      <button type="submit">▶ Run Code</button>
+      <!-- Ask AI button removed from here -->
     </div>
-  </form>
+
+    <div class="right-panel">
+      {% if output %}
+      <div class="output-box">
+        <h3>Output:</h3>
+        <pre>{{ output }}</pre>
+      </div>
+      {% endif %}
+
+      {% if errors %}
+      <div class="output-box errors">
+        <h3>Errors:</h3>
+        <pre>{{ errors }}</pre>
+      </div>
+      {% endif %}
+
+      <!-- Ask AI button moved here, exactly the same as original -->
+      <button type="button" id="aiBtn" style="margin-top:10px;">🤖 Ask AI</button>
+
+      <div class="ai-output-box" id="aiOutput"></div>
+    </div>
+  </div>
+</form>
+
 
   <script>
     function toggleTheme() {
@@ -337,6 +363,31 @@
         button.textContent = "🌙";
       } else {
         button.textContent = "🌞";
+      }
+    });
+
+    document.getElementById("aiBtn").addEventListener("click", async () => {
+      const code = document.getElementById("code").value;
+      const responseBox = document.getElementById("aiOutput");
+      responseBox.innerText = "🤖 Thinking...";
+
+      try {
+        const res = await fetch("/gemini-ai/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code: code }),
+        });
+
+        const data = await res.json();
+        if (data.response) {
+          responseBox.innerText = data.response;
+        } else if (data.error) {
+          responseBox.innerText = "Error: " + data.error;
+        }
+      } catch (err) {
+        responseBox.innerText = "Failed to connect to AI.";
       }
     });
   </script>

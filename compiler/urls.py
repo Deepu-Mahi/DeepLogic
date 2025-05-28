@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import welcome 
-
+from submit.views import gemini_ai
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", welcome, name="welcome"), 
     path("auth/", include("accounts.urls")),
     path("submit/", include("submit.urls")),
-    
+    path('gemini-ai/', gemini_ai, name='gemini_ai'),
 ]
