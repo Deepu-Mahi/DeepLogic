@@ -24,7 +24,7 @@ from django.http import JsonResponse
 import google.generativeai as genai
 import json
 
-genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ")
+genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ") 
 
 @csrf_exempt
 def ask_ai_for_boilerplate(request):
@@ -37,7 +37,7 @@ def ask_ai_for_boilerplate(request):
             if not problem_desc:
                 return JsonResponse({"error": "No problem description provided."}, status=400)
 
-            genai.configure(api_key="YOUR_KEY_HERE")
+            
 
             model = genai.GenerativeModel("models/gemini-1.5-pro")
 
@@ -46,7 +46,7 @@ def ask_ai_for_boilerplate(request):
             response = model.generate_content(prompt)
             ai_response = getattr(response, "text", "") or str(response)
 
-            return JsonResponse({"ai_response": ai_response.text})
+            return JsonResponse({"ai_response": ai_response})
 
         except Exception as e:
             print("Gemini AI Boilerplate Error:", str(e))
@@ -55,7 +55,7 @@ def ask_ai_for_boilerplate(request):
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ")  # Replace with your actual Gemini API key
+ # Replace with your actual Gemini API key
 
 @csrf_exempt
 def gemini_ai(request):
