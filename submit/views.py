@@ -19,6 +19,40 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from django.utils.html import escape
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import google.generativeai as genai
+import json
+
+genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ")
+
+@csrf_exempt
+def ask_ai_for_boilerplate(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            problem_desc = data.get("problem_description", "")
+            language = data.get("language", "Python")
+
+            if not problem_desc:
+                return JsonResponse({"error": "No problem description provided."}, status=400)
+
+            genai.configure(api_key="YOUR_KEY_HERE")
+
+            model = genai.GenerativeModel("models/gemini-1.5-pro")
+
+            prompt = f"Write a {language} boilerplate code template for the following problem:\n\n{problem_desc}\n\nOnly return the code without explanation."
+
+            response = model.generate_content(prompt)
+            ai_response = getattr(response, "text", "") or str(response)
+
+            return JsonResponse({"ai_response": ai_response.text})
+
+        except Exception as e:
+            print("Gemini AI Boilerplate Error:", str(e))
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
 genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ")  # Replace with your actual Gemini API key

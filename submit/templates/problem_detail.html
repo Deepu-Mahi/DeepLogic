@@ -301,30 +301,52 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    
+
     }
+    .ai-output-box {
+  background-color: #0d1117;
+  color: #c9f1ff;
+  border: 1px solid #1f6feb;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 0.95rem;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.light-theme .ai-output-box {
+  background: #f0f0f0;
+  color: #006400;
+  border-color: #28a745;
+}
+
   </style>
+</style>
 </head>
 <body>
 
   <!-- Navbar -->
- <nav class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-left">
-      <a href="{% url 'problem_list' %}" class="nav-link">Problems</a>
-      <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="{% url 'problem_list' %}" class="nav-link">Problems</a>
+        <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+      </div>
+      <div class="navbar-right">
+        <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
+      </div>
     </div>
-    <div class="navbar-right">
-      <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
-    </div>
-  </div>
-</nav>
+  </nav>
 
   <h1>{{ problem.title }}</h1>
 
   <div class="main-container">
 
+    <!-- LEFT PANEL -->
     <div class="left-panel">
-      <p>{{ problem.description|linebreaks }}</p>
+      <p id="problem-description">{{ problem.description|linebreaksbr }}</p>
 
       <h3>Input Format</h3>
       <pre>{{ problem.input_format }}</pre>
@@ -333,20 +355,21 @@
       <pre>{{ problem.output_format }}</pre>
 
       <h3>Sample Input</h3>
-<pre>{{ problem.sample_input }}</pre>
+      <pre>{{ problem.sample_input }}</pre>
 
-<h3>Sample Output</h3>
-<pre>{{ problem.sample_output }}</pre>
-
+      <h3>Sample Output</h3>
+      <pre>{{ problem.sample_output }}</pre>
     </div>
 
+    <!-- RIGHT PANEL -->
     <div class="right-panel">
       <h3>Try Your Code</h3>
       <form method="post">
         {% csrf_token %}
+
         <label>
           Language:
-          <select name="language">
+          <select name="language" id="languageSelect">
             <option value="py" {% if posted_language == "py" %}selected{% endif %}>Python</option>
             <option value="cpp" {% if posted_language == "cpp" %}selected{% endif %}>C++</option>
             <option value="c" {% if posted_language == "c" %}selected{% endif %}>C</option>
@@ -356,23 +379,27 @@
 
         <label>
           Code:
-          <textarea name="code" placeholder="Write your code here...">{{ posted_code }}</textarea>
+          <textarea name="code" id="codeEditor" placeholder="Write your code here...">{{ posted_code }}</textarea>
         </label>
 
         <label>
           Custom Input (used for "Run Code" only):
-          <textarea name="custom_input" placeholder="Enter custom input...">{{ custom_input }}</textarea>
+          <textarea name="custom_input">{{ custom_input }}</textarea>
         </label>
 
         <div class="btn-group">
           <button type="submit" name="action" value="run">Run Code</button>
           <button type="submit" name="action" value="submit">Submit</button>
+          <button type="button" id="askAiBoilerplateBtn">🤖 Ask AI for Boilerplate</button>
         </div>
+
+        <div id="boilerplateOutput" class="ai-output-box" style="display: none;"></div>
       </form>
     </div>
 
   </div>
 
+  <!-- Run result -->
   {% if raw_output or raw_errors %}
     <h3>Run Result</h3>
     <div class="test-result" style="border-left-color:#00bfff; color:#b2e5ff; background-color:#002a44cc;">
@@ -385,6 +412,7 @@
     </div>
   {% endif %}
 
+  <!-- Submission result -->
   {% if test_results %}
     <h3>Test Case Results</h3>
     {% for result in test_results %}
@@ -401,6 +429,46 @@
   {% endif %}
 
   <a href="{% url 'problem_list' %}" class="back-link">&larr; Back to Problems List</a>
+<script>
+  document.getElementById("askAiBoilerplateBtn").addEventListener("click", async () => {
+    const description = document.getElementById("problem-description").innerText.trim();
+    const language = document.getElementById("languageSelect").value;
+    const outputBox = document.getElementById("boilerplateOutput");
+
+    outputBox.style.display = "block";
+    outputBox.textContent = "🤖 Thinking...";
+
+    try {
+      const response = await fetch("{% url 'ask_ai_boilerplate' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Remove the CSRF token header if your Django view uses @csrf_exempt
+          // "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+          problem_description: description,
+          language: language
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ai_response) {
+        document.getElementById("codeEditor").value = data.ai_response;
+        outputBox.textContent = data.ai_response;
+      } else if(data.error) {
+        outputBox.textContent = "⚠️ Error from server: " + data.error;
+      } else {
+        outputBox.textContent = "⚠️ Failed to generate boilerplate.";
+      }
+    } catch (error) {
+      outputBox.textContent = "❌ Error: " + error.message;
+    }
+  });
+</script>
+
+
 
 </body>
 </html>

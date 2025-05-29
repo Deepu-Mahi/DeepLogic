@@ -6,25 +6,25 @@ from .views import (
     profile_view,
     problem_list,
     problem_detail,
+    gemini_ai,
+    ask_ai_for_boilerplate,
 )
-from .views import gemini_ai
-
 
 urlpatterns = [
-    # Standalone compiler page (e.g., from profile)
+    # Standalone compiler page (from profile page)
     path('', login_required(submit, login_url='/auth/login/'), name='submit'),
 
+    # Authentication-related
     path('logout/', logout_user, name='logout'),
 
+    # Profile page
     path('profile/', login_required(profile_view, login_url='/auth/login/'), name='profile'),
 
-    # List all problems
+    # Problem list and details
     path('problems/', login_required(problem_list, login_url='/auth/login/'), name='problem_list'),
-
-    # Problem details + code submission with test cases
     path('problems/<int:problem_id>/', login_required(problem_detail, login_url='/auth/login/'), name='problem_detail'),
-     path('gemini-ai/', gemini_ai, name='gemini_ai'),
 
-    # Optional: You could add a dedicated submit URL for problems, but your design uses problem_detail POST for submission
-    # So no separate 'submit' path under problems needed here
+    # AI endpoints
+    path('gemini-ai/', gemini_ai, name='gemini_ai'),
+    path('ask_ai_boilerplate/', ask_ai_for_boilerplate, name='ask_ai_boilerplate'),
 ]
