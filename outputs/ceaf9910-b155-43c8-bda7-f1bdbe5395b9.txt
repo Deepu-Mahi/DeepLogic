@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\ceaf9910-b155-43c8-bda7-f1bdbe5395b9.py", line 1, in <module>
+    ptinysd
+NameError: name 'ptinysd' is not defined

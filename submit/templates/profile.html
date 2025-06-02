@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Profile - Online Judge</title>
@@ -19,6 +20,7 @@
       background-color: var(--color-bg-dark);
       color: var(--color-text-dark);
     }
+
     body.light {
       background-color: var(--color-bg-light);
       color: var(--color-text-light);
@@ -43,12 +45,14 @@
       color: #000;
       user-select: none;
     }
+
     .navbar .left-nav,
     .navbar .right-nav {
       display: flex;
       align-items: center;
       gap: 20px;
     }
+
     .navbar a {
       color: #000;
       text-decoration: none;
@@ -58,6 +62,7 @@
       transition: all var(--transition);
       cursor: pointer;
     }
+
     .navbar a::after {
       content: '';
       position: absolute;
@@ -68,6 +73,7 @@
       left: 0;
       transition: width var(--transition);
     }
+
     .navbar a:hover::after {
       width: 100%;
     }
@@ -83,6 +89,7 @@
       transition: background-color var(--transition), color var(--transition);
       user-select: none;
     }
+
     .theme-toggle-btn:hover {
       background-color: #000;
       color: var(--color-primary);
@@ -104,12 +111,14 @@
       text-align: center;
       animation: fadeInDown 0.6s ease forwards;
     }
+
     .welcome-box h1 {
       font-size: 3rem;
       font-weight: 700;
       margin-bottom: 0.2em;
       text-shadow: 0 0 10px var(--color-primary);
     }
+
     .welcome-box p {
       font-size: 1.25rem;
       color: var(--color-primary);
@@ -123,9 +132,11 @@
       justify-content: center;
       animation: fadeInUp 0.6s ease forwards;
     }
+
     .button-group a {
       text-decoration: none;
     }
+
     .btn-compiler {
       padding: 14px 35px;
       font-size: 1.2em;
@@ -139,6 +150,7 @@
       transition: transform var(--transition), box-shadow var(--transition);
       user-select: none;
     }
+
     .btn-compiler:hover {
       transform: scale(1.1);
       box-shadow: 0 10px 30px rgba(0, 191, 255, 0.8);
@@ -157,6 +169,7 @@
       animation: fadeIn 0.5s ease forwards;
       user-select: none;
     }
+
     .card h3 {
       margin-top: 0;
       text-align: center;
@@ -164,6 +177,7 @@
       text-shadow: 0 0 10px var(--color-primary);
       font-weight: 700;
     }
+
     .card p {
       margin: 10px 0;
       border-bottom: 1px solid rgba(0, 191, 255, 0.3);
@@ -178,6 +192,7 @@
       animation: fadeIn 0.5s ease forwards;
       user-select: none;
     }
+
     h2.submissions-title {
       margin-top: 50px;
       font-size: 2.4rem;
@@ -193,45 +208,78 @@
       font-size: 1rem;
       color: var(--color-primary);
     }
+
     table.submissions-table th,
     table.submissions-table td {
       border: 1px solid rgba(0, 191, 255, 0.5);
       padding: 12px 15px;
       text-align: left;
     }
+
     table.submissions-table th {
       background-color: #111a2b;
       color: #00e5ff;
       font-weight: 700;
     }
+
     table.submissions-table tbody tr:nth-child(even) {
       background-color: rgba(0, 191, 255, 0.15);
     }
+
     a.problem-link {
       color: var(--color-primary);
       font-weight: 700;
       text-decoration: none;
       transition: all var(--transition);
     }
+
     a.problem-link:hover {
       text-shadow: 0 0 8px var(--color-primary);
       transform: scale(1.05);
     }
 
-    .status-passed { color: #0f0; font-weight: 700; }
-    .status-failed { color: #f00; font-weight: 700; }
+    .status-passed {
+      color: #0f0;
+      font-weight: 700;
+    }
+
+    .status-failed {
+      color: #f00;
+      font-weight: 700;
+    }
 
     @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-30px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
 
     .robot-container {
@@ -244,6 +292,7 @@
       user-select: none;
       z-index: 1000;
     }
+
     .robot-svg {
       width: 100%;
       height: 100%;
@@ -251,13 +300,22 @@
       filter: drop-shadow(0 0 6px var(--color-primary));
       transition: transform 0.3s ease;
     }
+
     .robot-container:hover .robot-svg {
       transform: scale(1.1);
       filter: drop-shadow(0 0 12px var(--color-primary));
     }
+
     @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
     }
 
     @media (max-width: 600px) {
@@ -265,15 +323,19 @@
         width: 100%;
         padding: 15px 0;
       }
+
       .button-group {
         flex-direction: column;
         gap: 20px;
       }
+
       .navbar {
         flex-wrap: wrap;
         gap: 10px;
       }
-      .navbar .left-nav, .navbar .right-nav {
+
+      .navbar .left-nav,
+      .navbar .right-nav {
         width: 100%;
         justify-content: center;
         gap: 30px;
@@ -281,6 +343,7 @@
     }
   </style>
 </head>
+
 <body class="dark">
   <div class="navbar">
     <div class="left-nav">
@@ -333,21 +396,22 @@
               {% endif %}
             </td>
             <td>{{ sub.language|upper }}</td>
-            <td>{% if sub.errors %}<span class="status-failed">Failed</span>{% else %}<span class="status-passed">Passed</span>{% endif %}</td>
+            <td>{% if sub.errors %}<span class="status-failed">Failed</span>{% else %}<span
+                class="status-passed">Passed</span>{% endif %}</td>
             <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% else %}
-        <p style="text-align:center; margin-top:20px;">No submissions yet.</p>
+      <p style="text-align:center; margin-top:20px;">No submissions yet.</p>
       {% endif %}
     </div>
   </div>
 
   <div class="robot-container" title="Hi! Ready to code?">
     <svg class="robot-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="32" cy="32" r="30" stroke="var(--color-primary)" stroke-width="3"/>
+      <circle cx="32" cy="32" r="30" stroke="var(--color-primary)" stroke-width="3" />
       <rect x="20" y="20" width="24" height="24" rx="5" ry="5" fill="var(--color-primary)" fill-opacity="0.1" />
       <circle cx="25" cy="30" r="3" fill="var(--color-primary)" />
       <circle cx="39" cy="30" r="3" fill="var(--color-primary)" />
@@ -369,7 +433,7 @@
     });
 
     themeToggleBtn.addEventListener("click", () => {
-      if(body.classList.contains("dark")) {
+      if (body.classList.contains("dark")) {
         body.classList.replace("dark", "light");
         themeToggleBtn.textContent = "☀️";
       } else {
@@ -379,4 +443,5 @@
     });
   </script>
 </body>
+
 </html>

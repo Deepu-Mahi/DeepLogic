@@ -3,7 +3,6 @@ import subprocess
 import uuid
 import sys
 import re
-import logging
 from pathlib import Path
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,23 +11,20 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import escape
 import json
+import google.generativeai as genai
+from dotenv import load_dotenv
+
 from submit.models import CodeSubmission
 from .models import Problem
-from dotenv import load_dotenv
-import google.generativeai as genai
-from django.utils.html import escape
 
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-import google.generativeai as genai
-import json
-import os
-from django.conf import settings
-
+# Configure the Gemini API key
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-
+# -----------------------------
+# Gemini AI: Boilerplate Code Generator
+# -----------------------------
 @csrf_exempt
 def ask_ai_for_boilerplate(request):
     if request.method == "POST":
@@ -39,8 +35,6 @@ def ask_ai_for_boilerplate(request):
 
             if not problem_desc:
                 return JsonResponse({"error": "No problem description provided."}, status=400)
-
-            
 
             model = genai.GenerativeModel("models/gemini-1.5-flash")
 
@@ -54,12 +48,13 @@ def ask_ai_for_boilerplate(request):
         except Exception as e:
             print("Gemini AI Boilerplate Error:", str(e))
             return JsonResponse({"error": str(e)}, status=500)
-    else:
-        return JsonResponse({"error": "Invalid request method."}, status=405)
+
+    return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
- # Replace with your actual Gemini API key
-
+# -----------------------------
+# Gemini AI: Code Fix and Improvement
+# -----------------------------
 @csrf_exempt
 def gemini_ai(request):
     if request.method == 'POST':
@@ -67,28 +62,20 @@ def gemini_ai(request):
             data = json.loads(request.body)
             code = data.get('code', '')
 
-            # Build the prompt for Gemini to fix and improve the code
             prompt = f"Fix any bugs and improve the following code:\n\n{code}"
-
-            # Initialize the model with the recommended Gemini 2.5 pro preview model
             model = genai.GenerativeModel("models/gemini-1.5-flash")
-
-            # Call generate_content with the prompt
             response = model.generate_content(prompt)
 
-            # Return the fixed/improved code text
             return JsonResponse({'response': response.text})
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-    else:
-        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
-
+    return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
 
 # -----------------------------
-# Compiler Page
+# Compiler Page: Code Execution
 # -----------------------------
 @login_required
 def submit(request):
@@ -126,16 +113,18 @@ def submit(request):
 
     return render(request, "index.html")
 
+
 # -----------------------------
-# Profile Page
+# User Profile Page
 # -----------------------------
 @login_required
 def profile_view(request):
     submissions = CodeSubmission.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'profile.html', {'submissions': submissions})
 
+
 # -----------------------------
-# Problem List
+# Problem List View
 # -----------------------------
 @login_required
 def problem_list(request):
@@ -158,8 +147,9 @@ def problem_list(request):
         'selected_topic': topic,
     })
 
+
 # -----------------------------
-# Problem Detail & Test Cases
+# Problem Detail and Submission with Test Cases
 # -----------------------------
 @login_required
 def problem_detail(request, problem_id):
@@ -213,6 +203,7 @@ def problem_detail(request, problem_id):
         'custom_input': request.POST.get('custom_input', ''),
     })
 
+
 # -----------------------------
 # Logout
 # -----------------------------
@@ -221,28 +212,27 @@ def logout_user(request):
     messages.info(request, "Logout successful.")
     return redirect('/auth/login/')
 
+
 # -----------------------------
-# Code Execution Function
+# Core Code Execution Logic
 # -----------------------------
 def run_code(language, code, input_data):
     base_path = Path(settings.BASE_DIR)
     codes_dir = base_path / "codes"
     inputs_dir = base_path / "inputs"
-    outputs_dir = base_path / "outputs"  # ✅ add this
+    outputs_dir = base_path / "outputs"
 
-    for folder in [codes_dir, inputs_dir, outputs_dir]:  # ✅ include outputs
+    for folder in [codes_dir, inputs_dir, outputs_dir]:
         folder.mkdir(parents=True, exist_ok=True)
 
     unique_id = str(uuid.uuid4())
     input_file = inputs_dir / f"{unique_id}.txt"
-    output_file = outputs_dir / f"{unique_id}.txt"  # ✅ create output file
-
+    output_file = outputs_dir / f"{unique_id}.txt"
     input_file.write_text(input_data)
 
     output, errors = "", ""
-    exec_file = None
+    exec_file = code_file = None
     class_name = None
-    code_file = None
     ext = ".exe" if sys.platform.startswith("win") else ""
 
     try:
@@ -250,65 +240,52 @@ def run_code(language, code, input_data):
             code_file = codes_dir / f"{unique_id}.cpp"
             exec_file = codes_dir / f"{unique_id}{ext}"
             code_file.write_text(code)
-            compile = subprocess.run(["g++", str(code_file), "-o", str(exec_file)],
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                     text=True, timeout=10)
+            compile = subprocess.run(["g++", str(code_file), "-o", str(exec_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)  # ✅ write to file
+                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
-                run = subprocess.run([str(exec_file)], stdin=infile,
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                     text=True, timeout=5)
+                run = subprocess.run([str(exec_file)], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
             output, errors = run.stdout.strip(), run.stderr.strip()
 
         elif language == "c":
             code_file = codes_dir / f"{unique_id}.c"
             exec_file = codes_dir / f"{unique_id}{ext}"
             code_file.write_text(code)
-            compile = subprocess.run(["gcc", str(code_file), "-o", str(exec_file)],
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                     text=True, timeout=10)
+            compile = subprocess.run(["gcc", str(code_file), "-o", str(exec_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)  # ✅ write to file
+                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
-                run = subprocess.run([str(exec_file)], stdin=infile,
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                     text=True, timeout=5)
+                run = subprocess.run([str(exec_file)], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
             output, errors = run.stdout.strip(), run.stderr.strip()
 
         elif language == "py":
             code_file = codes_dir / f"{unique_id}.py"
             code_file.write_text(code)
-            run = subprocess.run(["python3", str(code_file)],
-                                 input=input_data, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, text=True, timeout=5)
+            run = subprocess.run(["python3", str(code_file)], input=input_data, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
             output, errors = run.stdout.strip(), run.stderr.strip()
 
         elif language == "java":
             class_name = f"Main_{unique_id.replace('-', '_')}"
-            if not re.search(r"public\s+class\s+Main\b", code):
+            if not re.search(r"public\\s+class\\s+Main\\b", code):
                 errors = "Java code must contain 'public class Main'."
-                output_file.write_text(errors)  # ✅ write to file
+                output_file.write_text(errors)
                 return "", errors
-            code = re.sub(r"public\s+class\s+Main\b", f"public class {class_name}", code)
+            code = re.sub(r"public\\s+class\\s+Main\\b", f"public class {class_name}", code)
             code_file = codes_dir / f"{class_name}.java"
             code_file.write_text(code)
-            compile = subprocess.run(["javac", str(code_file)],
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                     text=True, timeout=10)
+            compile = subprocess.run(["javac", str(code_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)  # ✅ write to file
+                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
-                run = subprocess.run(["java", "-cp", str(codes_dir), class_name],
-                                     stdin=infile, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE, text=True, timeout=5)
+                run = subprocess.run(["java", "-cp", str(codes_dir), class_name], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
             output, errors = run.stdout.strip(), run.stderr.strip()
+
         else:
             errors = "Unsupported language."
 
@@ -316,8 +293,8 @@ def run_code(language, code, input_data):
         errors = "Execution timed out."
     except Exception as e:
         errors = f"Error: {str(e)}"
+
     finally:
-        # ✅ write final output/errors to output file
         final_output = output if output else errors
         output_file.write_text(final_output)
 
@@ -333,7 +310,7 @@ def run_code(language, code, input_data):
         for f in files_to_remove:
             try:
                 f.unlink()
-            except Exception as e:
+            except Exception:
                 pass
 
     return output, errors
