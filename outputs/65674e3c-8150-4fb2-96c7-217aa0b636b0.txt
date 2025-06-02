@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\65674e3c-8150-4fb2-96c7-217aa0b636b0.py", line 1, in <module>
+    h=int(input())
+      ^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'ss'

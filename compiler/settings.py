@@ -11,10 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from dotenv import load_dotenv
-import os
-
 load_dotenv()  # This loads the .env file
-
+import os
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 
@@ -45,9 +43,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "inputs",
-    # "outputs",
-    # "codes",
+    "inputs",
+    "outputs",
+    "codes",
     "submit",
     "accounts",
     

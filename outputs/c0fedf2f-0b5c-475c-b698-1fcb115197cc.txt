@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\c0fedf2f-0b5c-475c-b698-1fcb115197cc.py", line 1, in <module>
+    print(hi)
+          ^^
+NameError: name 'hi' is not defined

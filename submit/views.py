@@ -23,8 +23,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import google.generativeai as genai
 import json
+import os
+from django.conf import settings
 
-genai.configure(api_key="AIzaSyBLOPsmvPCUIpBL7xIe6pIOqbUXzf18YnQ") 
+genai.configure(api_key=settings.GEMINI_API_KEY)
+
 
 @csrf_exempt
 def ask_ai_for_boilerplate(request):
@@ -39,7 +42,7 @@ def ask_ai_for_boilerplate(request):
 
             
 
-            model = genai.GenerativeModel("models/gemini-1.5-pro")
+            model = genai.GenerativeModel("models/gemini-1.5-flash")
 
             prompt = f"Write a {language} boilerplate code template for the following problem:\n\n{problem_desc}\n\nOnly return the code without explanation."
 
@@ -68,7 +71,7 @@ def gemini_ai(request):
             prompt = f"Fix any bugs and improve the following code:\n\n{code}"
 
             # Initialize the model with the recommended Gemini 2.5 pro preview model
-            model = genai.GenerativeModel("models/gemini-1.5-pro")
+            model = genai.GenerativeModel("models/gemini-1.5-flash")
 
             # Call generate_content with the prompt
             response = model.generate_content(prompt)
@@ -225,11 +228,15 @@ def run_code(language, code, input_data):
     base_path = Path(settings.BASE_DIR)
     codes_dir = base_path / "codes"
     inputs_dir = base_path / "inputs"
-    for folder in [codes_dir, inputs_dir]:
+    outputs_dir = base_path / "outputs"  # ✅ add this
+
+    for folder in [codes_dir, inputs_dir, outputs_dir]:  # ✅ include outputs
         folder.mkdir(parents=True, exist_ok=True)
 
     unique_id = str(uuid.uuid4())
     input_file = inputs_dir / f"{unique_id}.txt"
+    output_file = outputs_dir / f"{unique_id}.txt"  # ✅ create output file
+
     input_file.write_text(input_data)
 
     output, errors = "", ""
@@ -247,7 +254,9 @@ def run_code(language, code, input_data):
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                      text=True, timeout=10)
             if compile.returncode != 0:
-                return "", compile.stderr.strip()
+                errors = compile.stderr.strip()
+                output_file.write_text(errors)  # ✅ write to file
+                return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run([str(exec_file)], stdin=infile,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -262,7 +271,9 @@ def run_code(language, code, input_data):
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                      text=True, timeout=10)
             if compile.returncode != 0:
-                return "", compile.stderr.strip()
+                errors = compile.stderr.strip()
+                output_file.write_text(errors)  # ✅ write to file
+                return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run([str(exec_file)], stdin=infile,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -280,7 +291,9 @@ def run_code(language, code, input_data):
         elif language == "java":
             class_name = f"Main_{unique_id.replace('-', '_')}"
             if not re.search(r"public\s+class\s+Main\b", code):
-                return "", "Java code must contain 'public class Main'."
+                errors = "Java code must contain 'public class Main'."
+                output_file.write_text(errors)  # ✅ write to file
+                return "", errors
             code = re.sub(r"public\s+class\s+Main\b", f"public class {class_name}", code)
             code_file = codes_dir / f"{class_name}.java"
             code_file.write_text(code)
@@ -288,7 +301,9 @@ def run_code(language, code, input_data):
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                      text=True, timeout=10)
             if compile.returncode != 0:
-                return "", compile.stderr.strip()
+                errors = compile.stderr.strip()
+                output_file.write_text(errors)  # ✅ write to file
+                return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run(["java", "-cp", str(codes_dir), class_name],
                                      stdin=infile, stdout=subprocess.PIPE,
@@ -301,8 +316,11 @@ def run_code(language, code, input_data):
         errors = "Execution timed out."
     except Exception as e:
         errors = f"Error: {str(e)}"
-        logger.exception("Execution error:")
     finally:
+        # ✅ write final output/errors to output file
+        final_output = output if output else errors
+        output_file.write_text(final_output)
+
         files_to_remove = [input_file]
         if code_file and code_file.exists():
             files_to_remove.append(code_file)
@@ -316,6 +334,6 @@ def run_code(language, code, input_data):
             try:
                 f.unlink()
             except Exception as e:
-                logger.warning(f"Failed to delete file {f}: {e}")
+                pass
 
     return output, errors

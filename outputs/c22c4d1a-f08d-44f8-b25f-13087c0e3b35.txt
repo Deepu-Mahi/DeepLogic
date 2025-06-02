@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\c22c4d1a-f08d-44f8-b25f-13087c0e3b35.py", line 1, in <module>
+    a=int(input())
+      ^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'dd'

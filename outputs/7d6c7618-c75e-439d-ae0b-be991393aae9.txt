@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\7d6c7618-c75e-439d-ae0b-be991393aae9.py", line 1, in <module>
+    prin("h")
+    ^^^^
+NameError: name 'prin' is not defined. Did you mean: 'print'?

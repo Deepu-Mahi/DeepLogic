@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\8653b5e8-badd-4266-86c4-ab4e3e0a606e.py", line 1, in <module>
+    print(h)
+          ^
+NameError: name 'h' is not defined
