@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\0f098d50-032e-43f0-92a9-bb5ef068b264.py", line 1, in <module>
+    erg
+NameError: name 'erg' is not defined

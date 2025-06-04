@@ -9,22 +9,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.html import escape
 import json
 import google.generativeai as genai
-from dotenv import load_dotenv
 
-from submit.models import CodeSubmission
-from .models import Problem
+from .models import Problem, CodeSubmission  # 🔹 ADDED CodeSubmission
 
-# Configure the Gemini API key
+
+# Configure Gemini API
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-# -----------------------------
-# Gemini AI: Boilerplate Code Generator
-# -----------------------------
+
 @csrf_exempt
 def ask_ai_for_boilerplate(request):
     if request.method == "POST":
@@ -37,24 +33,17 @@ def ask_ai_for_boilerplate(request):
                 return JsonResponse({"error": "No problem description provided."}, status=400)
 
             model = genai.GenerativeModel("models/gemini-1.5-flash")
-
             prompt = f"Write a {language} boilerplate code template for the following problem:\n\n{problem_desc}\n\nOnly return the code without explanation."
-
             response = model.generate_content(prompt)
             ai_response = getattr(response, "text", "") or str(response)
-
             return JsonResponse({"ai_response": ai_response})
 
         except Exception as e:
-            print("Gemini AI Boilerplate Error:", str(e))
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-# -----------------------------
-# Gemini AI: Code Fix and Improvement
-# -----------------------------
 @csrf_exempt
 def gemini_ai(request):
     if request.method == 'POST':
@@ -74,9 +63,10 @@ def gemini_ai(request):
     return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
 
-# -----------------------------
-# Compiler Page: Code Execution
-# -----------------------------
+def deeplogic_page(request):
+    return render(request, 'deeplogic.html')
+
+# ----------------------------- Standalone Compiler with Submission Saving
 @login_required
 def submit(request):
     if request.method == "POST":
@@ -93,6 +83,8 @@ def submit(request):
             })
 
         output, errors = run_code(language, code, input_data)
+
+        # 🔹 Save submission
         submission = CodeSubmission.objects.create(
             user=request.user,
             language=language,
@@ -103,29 +95,32 @@ def submit(request):
         )
 
         return render(request, "index.html", {
-            "submission": submission,
             "language": language,
             "code": code,
             "input_data": input_data,
             "output": output,
             "errors": errors,
+            "submission": submission
         })
 
     return render(request, "index.html")
 
 
-# -----------------------------
-# User Profile Page
-# -----------------------------
+# ----------------------------- Profile View: Show Submission History
 @login_required
 def profile_view(request):
     submissions = CodeSubmission.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'profile.html', {'submissions': submissions})
 
-
-# -----------------------------
-# Problem List View
-# -----------------------------
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST.get('username', user.username)
+        user.email = request.POST.get('email', user.email)
+        user.save()
+    return redirect('profile')
+# ----------------------------- Problem List View
 @login_required
 def problem_list(request):
     query = request.GET.get('q', '')
@@ -148,9 +143,7 @@ def problem_list(request):
     })
 
 
-# -----------------------------
-# Problem Detail and Submission with Test Cases
-# -----------------------------
+# ----------------------------- Problem Detail View with Submission Saving
 @login_required
 def problem_detail(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
@@ -167,6 +160,7 @@ def problem_detail(request, problem_id):
         else:
             if action == "run":
                 raw_output, raw_errors = run_code(language, code, custom_input)
+
             elif action == "submit":
                 test_results = []
                 for test_case in problem.test_cases.all():
@@ -182,6 +176,7 @@ def problem_detail(request, problem_id):
                         'status': "Passed" if passed else "Failed"
                     })
 
+                # 🔹 Save submission with all test results
                 CodeSubmission.objects.create(
                     user=request.user,
                     problem=problem,
@@ -204,18 +199,14 @@ def problem_detail(request, problem_id):
     })
 
 
-# -----------------------------
-# Logout
-# -----------------------------
+# ----------------------------- Logout
 def logout_user(request):
     logout(request)
     messages.info(request, "Logout successful.")
     return redirect('/auth/login/')
 
 
-# -----------------------------
-# Core Code Execution Logic
-# -----------------------------
+# ----------------------------- Core Code Execution Logic
 def run_code(language, code, input_data):
     base_path = Path(settings.BASE_DIR)
     codes_dir = base_path / "codes"
@@ -240,10 +231,10 @@ def run_code(language, code, input_data):
             code_file = codes_dir / f"{unique_id}.cpp"
             exec_file = codes_dir / f"{unique_id}{ext}"
             code_file.write_text(code)
-            compile = subprocess.run(["g++", str(code_file), "-o", str(exec_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+            compile = subprocess.run(["g++", str(code_file), "-o", str(exec_file)],
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run([str(exec_file)], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
@@ -253,10 +244,10 @@ def run_code(language, code, input_data):
             code_file = codes_dir / f"{unique_id}.c"
             exec_file = codes_dir / f"{unique_id}{ext}"
             code_file.write_text(code)
-            compile = subprocess.run(["gcc", str(code_file), "-o", str(exec_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+            compile = subprocess.run(["gcc", str(code_file), "-o", str(exec_file)],
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run([str(exec_file)], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
@@ -270,17 +261,15 @@ def run_code(language, code, input_data):
 
         elif language == "java":
             class_name = f"Main_{unique_id.replace('-', '_')}"
-            if not re.search(r"public\\s+class\\s+Main\\b", code):
+            if not re.search(r"public\s+class\s+Main\b", code):
                 errors = "Java code must contain 'public class Main'."
-                output_file.write_text(errors)
                 return "", errors
-            code = re.sub(r"public\\s+class\\s+Main\\b", f"public class {class_name}", code)
+            code = re.sub(r"public\s+class\s+Main\b", f"public class {class_name}", code)
             code_file = codes_dir / f"{class_name}.java"
             code_file.write_text(code)
             compile = subprocess.run(["javac", str(code_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
             if compile.returncode != 0:
                 errors = compile.stderr.strip()
-                output_file.write_text(errors)
                 return "", errors
             with open(input_file, 'r') as infile:
                 run = subprocess.run(["java", "-cp", str(codes_dir), class_name], stdin=infile, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=5)
@@ -292,25 +281,13 @@ def run_code(language, code, input_data):
     except subprocess.TimeoutExpired:
         errors = "Execution timed out."
     except Exception as e:
-        errors = f"Error: {str(e)}"
-
+        errors = f"Error during code execution: {str(e)}"
     finally:
-        final_output = output if output else errors
-        output_file.write_text(final_output)
-
-        files_to_remove = [input_file]
-        if code_file and code_file.exists():
-            files_to_remove.append(code_file)
-        if exec_file and exec_file.exists():
-            files_to_remove.append(exec_file)
-        if language == "java" and class_name:
-            class_file = codes_dir / f"{class_name}.class"
-            if class_file.exists():
-                files_to_remove.append(class_file)
-        for f in files_to_remove:
-            try:
-                f.unlink()
-            except Exception:
-                pass
+        for f in [code_file, exec_file, input_file, output_file]:
+            if f and f.exists():
+                try:
+                    f.unlink()
+                except Exception:
+                    pass
 
     return output, errors

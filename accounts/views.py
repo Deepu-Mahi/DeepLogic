@@ -53,7 +53,7 @@ def login_user(request):
         login(request, user)
         messages.info(request, 'Login successful')
 
-        return redirect('/submit/profile/')  # ✅ Redirect to profile page after login
+        return redirect('/submit/profile/')  # Redirect to profile page after login
 
     template = loader.get_template('login.html')
     context = {}

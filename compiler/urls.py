@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from accounts.views import welcome 
 from submit.views import gemini_ai
+from submit.views import deeplogic_page
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,4 +26,5 @@ urlpatterns = [
     path("auth/", include("accounts.urls")),
     path("submit/", include("submit.urls")),
     path('gemini-ai/', gemini_ai, name='gemini_ai'),
+    path('deeplogic/', deeplogic_page, name='deeplogic'),
 ]

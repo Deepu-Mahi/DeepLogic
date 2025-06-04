@@ -1,0 +1,4 @@
+File "C:\Users\madhu\Desktop\compiler\compiler\codes\f20e4c25-469f-4504-951e-53ab2a61c92b.py", line 1
+    print("A)
+          ^
+SyntaxError: unterminated string literal (detected at line 1)

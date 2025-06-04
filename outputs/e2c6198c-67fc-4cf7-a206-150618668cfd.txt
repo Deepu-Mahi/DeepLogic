@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\e2c6198c-67fc-4cf7-a206-150618668cfd.py", line 1, in <module>
+    print(A)
+          ^
+NameError: name 'A' is not defined

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\0dd44227-45e7-41d6-86a2-8d5f858b9af0.py", line 1, in <module>
+    segvcfbdfbdf
+NameError: name 'segvcfbdfbdf' is not defined

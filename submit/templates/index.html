@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Online Code Compiler</title>
+  <title>CodeAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
   <style>
     * {
@@ -167,20 +167,18 @@
     }
 
     .output-box {
-  background: #0d1117;
-  border: 1px solid #1f6feb;
-  border-radius: 10px;
-  padding: 20px;
-  white-space: pre-wrap;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-  color: #c9f1ff;
-  overflow-y: auto;
-  flex-grow: 1;
-
-  max-height: 320px; /* new: limit height to half */
-}
-
+      background: #0d1117;
+      border: 1px solid #1f6feb;
+      border-radius: 10px;
+      padding: 20px;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      color: #c9f1ff;
+      overflow-y: auto;
+      flex-grow: 1;
+      max-height: 320px; /* new: limit height to half */
+    }
 
     .errors {
       color: #ff6b6b;
@@ -196,15 +194,15 @@
 
     .ai-output-box {
       background-color: #0d1117;
-  color: #c9f1ff;
-  border: 1px solid #1f6feb;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 0.95rem;
-  max-height: 250px;     /* Fixed height */
-  overflow-y: auto;      /* Enables vertical scrollbar */
-  margin-top: 10px;
-}
+      color: #c9f1ff;
+      border: 1px solid #1f6feb;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 0.95rem;
+      max-height: 250px;     /* Fixed height */
+      overflow-y: auto;      /* Enables vertical scrollbar */
+      margin-top: 10px;
+    }
 
     @media (max-width: 960px) {
       .main {
@@ -278,22 +276,30 @@
       color: #006400;
       border-color: #28a745;
     }
+   
+
+
   </style>
 </head>
 <body>
 
   <!-- Navbar -->
   <nav class="navbar">
-    <div class="nav-left">
-      <a href="{% url 'problem_list' %}" class="nav-link">🧩 Problems</a>
-    </div>
+   <div class="nav-left">
+
+   <a href="{% url 'deeplogic' %}" class="nav-link" style="font-size: 1.5em; font-weight: 700;">DeepLogic</a>
+
+  <a href="{% url 'profile' %}" class="nav-link">👤 Profile</a>
+  <a href="{% url 'problem_list' %}" class="nav-link">🧩 Problems</a>
+</div>
+
     <div class="nav-right">
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌞</button>
       <a href="{% url 'logout' %}" class="nav-link">🚪 Logout</a>
     </div>
   </nav>
 
-  <h1>⚡ Online Code Compiler</h1>
+  <h1> CodeAI 🤖</h1>
 
   {% if error %}
     <div class="error">{{ error }}</div>
@@ -318,7 +324,7 @@
       <textarea class="input-box" id="input_data" name="input_data" placeholder="Enter input for your code...">{{ input_data|default_if_none:"" }}</textarea>
 
       <button type="submit">▶ Run Code</button>
-      <!-- Ask AI button removed from here -->
+      
     </div>
 
     <div class="right-panel">
@@ -344,7 +350,6 @@
   </div>
 </form>
 
-
   <script>
     function toggleTheme() {
       const body = document.body;
@@ -366,7 +371,7 @@
       }
     });
 
-    document.getElementById("aiBtn").addEventListener("click", async () => {
+   document.getElementById("aiBtn").addEventListener("click", async () => {
       const code = document.getElementById("code").value;
       const responseBox = document.getElementById("aiOutput");
       responseBox.innerText = "🤖 Thinking...";

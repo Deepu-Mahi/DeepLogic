@@ -8,6 +8,8 @@ from .views import (
     problem_detail,
     gemini_ai,
     ask_ai_for_boilerplate,
+    deeplogic_page,
+    update_profile,
 )
 
 urlpatterns = [
@@ -29,6 +31,8 @@ urlpatterns = [
     # URL: /profile/
     path('profile/', login_required(profile_view, login_url='/auth/login/'), name='profile'),
 
+    path('deeplogic/', deeplogic_page, name='deeplogic'),
+
     # ------------------------------------
     # Problem Browsing
     # List of problems with filters
@@ -48,4 +52,6 @@ urlpatterns = [
     # Gemini AI to generate boilerplate code from problem description
     # URL: /ask_ai_boilerplate/
     path('ask_ai_boilerplate/', ask_ai_for_boilerplate, name='ask_ai_boilerplate'),
+    path('update-profile/', update_profile, name='update_profile'),
+
 ]

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Profile - Online Judge</title>
+  <title>Profile - DeepLogic</title>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -340,6 +340,25 @@
         justify-content: center;
         gap: 30px;
       }
+    .card input {
+  background-color: rgba(0, 191, 255, 0.1) !important;
+  color: inherit;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 10px 0 !important;
+  width: 100% !important;
+  font-family: "Fira Code", monospace !important;
+  font-size: 1.2rem !important;
+  box-sizing: border-box !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
     }
   </style>
 </head>
@@ -347,8 +366,11 @@
 <body class="dark">
   <div class="navbar">
     <div class="left-nav">
-      <a id="profileBtn">Profile</a>
-    </div>
+  <a href="{% url 'deeplogic' %}" style="font-size: 1.5em; font-weight: 700;">DeepLogic</a>
+
+  <a id="profileBtn">Profile</a>
+</div>
+
     <div class="right-nav">
       <button class="theme-toggle-btn" id="themeToggle">🌙</button>
       <a href="{% url 'logout' %}">Logout</a>
@@ -363,14 +385,33 @@
 
     <div class="button-group">
       <a href="{% url 'problem_list' %}"><button class="btn-compiler">View Problems</button></a>
-      <a href="{% url 'submit' %}"><button class="btn-compiler">Go to Compiler</button></a>
+      <a href="{% url 'submit' %}"><button class="btn-compiler">CodeAI</button></a>
     </div>
 
     <div class="card" id="profileCard" aria-live="polite" aria-atomic="true" role="region">
       <h3>Your Account Info</h3>
-      <p><strong>Username:</strong> {{ user.username }}</p>
-      <p><strong>Email:</strong> {{ user.email|default:"Not set" }}</p>
-      <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+<form id="accountForm" method="POST" action="{% url 'update_profile' %}">
+  {% csrf_token %}
+  <p>
+    <strong>Username:</strong>
+    <input type="text" name="username" id="usernameField" value="{{ user.username }}" readonly />
+  </p>
+  <p>
+    <strong>Email:</strong>
+    <input type="email" name="email" id="emailField" value="{{ user.email }}" readonly />
+  </p>
+  <p>
+    <strong>Date Joined:</strong>
+    <input type="text" id="dateJoinedField" value="{{ user.date_joined|date:'F j, Y' }}" readonly />
+
+  </p>
+
+  <div style="text-align:center; margin-top: 15px;">
+    <button type="button" id="editBtn" class="btn-compiler" style="margin-right: 10px;">Edit</button>
+    <button type="submit" id="saveBtn" class="btn-compiler" style="display:none;">Save Changes</button>
+  </div>
+</form>
+
     </div>
 
     <div class="submissions-section" id="submissionSection" aria-live="polite" aria-atomic="true" role="region">
@@ -409,7 +450,7 @@
     </div>
   </div>
 
-  <div class="robot-container" title="Hi! Ready to code?">
+   <div class="robot-container" title="Hi! Ready to code?">
     <svg class="robot-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="32" cy="32" r="30" stroke="var(--color-primary)" stroke-width="3" />
       <rect x="20" y="20" width="24" height="24" rx="5" ry="5" fill="var(--color-primary)" fill-opacity="0.1" />
@@ -418,6 +459,25 @@
       <rect x="28" y="38" width="8" height="4" rx="1" ry="1" fill="var(--color-primary)" />
     </svg>
   </div>
+
+  <div id="quoteBox" style="
+    position: fixed;
+    bottom: 120px;
+    right: 20px;
+    max-width: 250px;
+    padding: 15px;
+    background: rgba(0, 191, 255, 0.9);
+    color: #000;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px var(--color-primary);
+    display: none;
+    user-select: none;
+    z-index: 1001;
+  "></div>
+
+  
 
   <script>
     const profileBtn = document.getElementById("profileBtn");
@@ -441,6 +501,56 @@
         themeToggleBtn.textContent = "🌙";
       }
     });
+    document.addEventListener("DOMContentLoaded", function () {
+  const usernameField = document.getElementById("usernameField");
+  const emailField = document.getElementById("emailField");
+  const dateJoinedField = document.getElementById("dateJoinedField");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+
+  // Style all fields initially to look like plain text
+  const plainStyle = {
+    border: "none",
+    backgroundColor: "transparent",
+    color: "#ffffff"
+  };
+
+  Object.assign(usernameField.style, plainStyle);
+  Object.assign(emailField.style, plainStyle);
+  Object.assign(dateJoinedField.style, plainStyle);
+});
+
+document.getElementById("editBtn").addEventListener("click", function () {
+  const usernameField = document.getElementById("usernameField");
+  const emailField = document.getElementById("emailField");
+  const dateJoinedField = document.getElementById("dateJoinedField");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+
+  // Make only username and email editable
+  usernameField.removeAttribute("readonly");
+  emailField.removeAttribute("readonly");
+
+  // Style editable fields (not date joined)
+  const editableStyle = {
+    border: "1px solid #00e5ff",
+    backgroundColor: "rgba(0, 191, 255, 0.1)",
+    color: "#00e5ff"
+  };
+
+  Object.assign(usernameField.style, editableStyle);
+  Object.assign(emailField.style, editableStyle);
+
+  // Show Save button and hide Edit button
+  saveBtn.style.display = "inline-block";
+  editBtn.style.display = "none";
+
+  // Auto-focus first editable field
+  usernameField.focus();
+  
+});
+
+
   </script>
 </body>
 

@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeepLogic | AI Code Intelligence</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+ <style>
+  body {
+    font-family: 'Fira Code', monospace;
+    margin: 0;
+    min-height: 100vh;
+    background-color: #000000; /* pure black background */
+    color: #cfd8dc; /* light text for contrast */
+    overflow-x: hidden;
+  }
+  nav {
+    background: linear-gradient(90deg, #00bfff 0%, #1e90ff 100%);
+    backdrop-filter: saturate(180%) blur(10px);
+    box-shadow: 0 3px 15px rgba(0, 191, 255, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-title {
+    font-weight: 900;
+    font-size: 1.75rem;
+    color: #000; /* black text on navbar gradient */
+    user-select: none;
+    text-shadow: none;
+  }
+  .nav-link {
+  color: #cbd5e1;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  colour:#000;
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0%;
+  background-color: #22d3ee;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link:focus::after {
+  width: 100%;
+}
+
+/* ✅ Active nav link */
+.nav-link.active::after {
+  width: 100%;
+}
+
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+  h1, h2, h3 {
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    text-shadow:
+      0 0 4px rgba(30, 144, 255, 0.7),
+      0 0 12px rgba(0, 191, 255, 0.5);
+  }
+  h1 {
+    font-size: 3.5rem;
+    color: #00bfff;
+    margin-bottom: 0.75rem;
+  }
+  h2 {
+    font-size: 2.5rem;
+    color: #1e90ff;
+    margin-bottom: 1rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+    color: #63b3ed; /* lighter blue */
+    margin-bottom: 0.5rem;
+  }
+  p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #cfd8dc;
+  }
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.75rem;
+  }
+  .feature-card {
+    background: rgba(30, 144, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1.75rem;
+    box-shadow:
+      0 0 10px rgba(0, 191, 255, 0.35),
+      inset 0 0 6px rgba(0, 191, 255, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    color: #cfd8dc;
+  }
+  .feature-card:hover,
+  .feature-card:focus {
+    transform: translateY(-6px);
+    box-shadow:
+      0 0 20px #00bfff,
+      inset 0 0 10px #1e90ff;
+    outline: none;
+  }
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+  /* Buttons */
+  .btn-primary {
+    background: #00bfff;
+    color: #0f172a;
+    font-weight: 700;
+    padding: 1rem 2.5rem;
+    border-radius: 2rem;
+    box-shadow: 0 0 15px #00bfff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.25rem;
+    user-select: none;
+  }
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background: #1e90ff;
+    box-shadow: 0 0 25px #1e90ff;
+    outline: none;
+  }
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    background-color: rgba(15, 32, 39, 0.8);
+    backdrop-filter: saturate(180%) blur(10px);
+    margin-top: 4rem;
+    user-select: none;
+  }
+  footer a {
+    color: #00bfff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  footer a:hover,
+  footer a:focus {
+    text-decoration: underline;
+    color: #1e90ff;
+    outline: none;
+  }
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.75rem;
+    }
+    h2 {
+      font-size: 2rem;
+    }
+    section {
+      padding: 2rem 1rem;
+    }
+    
+  }
+</style>
+
+
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-6 md:px-16 py-5" role="navigation" aria-label="Main navigation">
+    <div class="nav-title select-none" tabindex="0">DeepLogic</div>
+    <div class="space-x-6 text-base md:text-lg">
+      <a href="{% url 'problem_list' %}" class="nav-link" tabindex="0">Problems</a>
+      <a href="{% url 'profile' %}" class="nav-link" tabindex="0">Profile</a>
+      <a href="{% url 'submit' %}" class="nav-link" tabindex="0">AI Compiler</a>
+      <a href="{% url 'logout' %}" class="nav-link text-red-400 hover:text-red-300" tabindex="0">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center" aria-label="Hero section introducing DeepLogic">
+    <h1>🚀 Welcome to DeepLogic</h1>
+    <p class="max-w-xl mx-auto mt-4 mb-12">
+      AI-powered coding platform that empowers developers with smart debugging, multi-language execution, and test case validation.
+    </p>
+    <a href="{% url 'submit' %}" class="btn-primary" role="button" tabindex="0">Submit Code</a>
+  </section>
+
+  <!-- About Section -->
+  <section aria-label="About DeepLogic">
+    <h2>💡 What is DeepLogic?</h2>
+    <p>
+      DeepLogic is a futuristic coding environment designed for learners and professionals who want to code smarter, debug faster, and validate their logic effortlessly. Integrated AI assistance helps you fix bugs and understand your code better.
+    </p>
+  </section>
+
+  <!-- Features Section -->
+  <section aria-label="Key features of DeepLogic">
+    <h2>⚙️ Features</h2>
+    <div class="features-grid">
+      <div class="feature-card" tabindex="0" aria-label="Multi-Language Support feature">
+        <div class="feature-icon" aria-hidden="true">💻</div>
+        <h3>Multi-Language Support</h3>
+        <p>Run Python, C, C++, and Java with seamless input/output handling.</p>
+      </div>
+      <div class="feature-card" tabindex="0" aria-label="AI Debugger feature">
+        <div class="feature-icon" aria-hidden="true">🧠</div>
+        <h3>AI Debugger</h3>
+        <p>Instant bug fixing and code explanations powered by OpenAI & Gemini.</p>
+      </div>
+      <div class="feature-card" tabindex="0" aria-label="Test Case Checker feature">
+        <div class="feature-icon" aria-hidden="true">🧪</div>
+        <h3>Test Case Checker</h3>
+        <p>Validate your code against real-time test cases for accuracy.</p>
+      </div>
+      <div class="feature-card" tabindex="0" aria-label="Submission History feature">
+        <div class="feature-icon" aria-hidden="true">📜</div>
+        <h3>Submission History</h3>
+        <p>Keep track of your coding journey and past attempts.</p>
+      </div>
+      <div class="feature-card" tabindex="0" aria-label="Glowing Interface feature">
+        <div class="feature-icon" aria-hidden="true">✨</div>
+        <h3>Glowing Interface</h3>
+        <p>Modern UI with subtle glowing accents to keep you focused.</p>
+      </div>
+      <div class="feature-card" tabindex="0" aria-label="Safe Execution feature">
+        <div class="feature-icon" aria-hidden="true">🔐</div>
+        <h3>Safe Execution</h3>
+        <p>Run your code in secure Docker containers with sandboxing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="text-center" aria-label="Call to action to start using DeepLogic">
+    <h2>Ready to Write Smarter Code?</h2>
+    <p>Experience the power of AI-assisted coding and test validation.</p>
+    <a href="{% url 'problem_list' %}" class="btn-primary" role="button" tabindex="0">Explore Problems</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 DeepLogic • Crafted with 🔥 by Deepu •
+    <a href="https://github.com/Deepu-Mahi/DeepLogic" target="_blank" rel="noopener noreferrer" tabindex="0">GitHub</a>
+  </footer>
+
+</body>
+</html>

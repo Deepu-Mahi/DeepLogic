@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\madhu\Desktop\compiler\compiler\codes\8e19630e-cce9-46fa-abc2-a381eef7e612.py", line 1, in <module>
+    sefvsdzvdzv
+NameError: name 'sefvsdzvdzv' is not defined

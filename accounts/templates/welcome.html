@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Online Judge Boot</title>
+  <title>DeepLogic Online Judge Boot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <meta name="description" content="DeepLogic - A futuristic online judge platform for coding and compiling solutions with style." />
+  <meta property="og:title" content="DeepLogic Online Judge" />
+  <meta property="og:image" content="I:\Downloads\logo.png" />
+  <link rel="icon" href="/static/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -44,6 +48,36 @@
       align-items: center;
     }
 
+    .site-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 3em;
+      font-weight: bold;
+      color: #00bfff;
+      text-shadow: 0 0 15px #00bfffcc;
+      user-select: none;
+      pointer-events: none;
+      margin-bottom: 10px; /* Reduced space here */
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Logo placeholder */
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      background: url('/static/logo.png') no-repeat center/contain;
+      filter: drop-shadow(0 0 5px #00bfff);
+    }
+
+    .tagline {
+      font-size: 1.2em;
+      margin: 10px 0 20px;
+      color: #00bfffcc;
+      font-style: italic;
+    }
+
     .boot-sequence {
       white-space: pre-line;
       font-size: 1em;
@@ -51,6 +85,7 @@
       min-height: 180px;
       text-align: left;
       width: 100%;
+      outline: none;
     }
 
     .btn-login {
@@ -68,6 +103,10 @@
       margin-top: 20px;
       opacity: 0;
       pointer-events: none;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      z-index: 2;
     }
 
     .btn-login.show {
@@ -76,15 +115,23 @@
       animation: fadeIn 0.5s ease;
     }
 
-    .btn-login:hover {
+    .btn-login:hover,
+    .btn-login:focus {
       background-color: #00bfff;
       color: black;
       transform: scale(1.05);
       box-shadow: 0 0 20px #00bfff;
+      outline: none;
     }
 
     .btn-login:active {
       transform: scale(0.95);
+    }
+
+    /* Visible focus ring for accessibility */
+    .btn-login:focus-visible {
+      outline: 3px solid #00bfff;
+      outline-offset: 4px;
     }
 
     #loader {
@@ -124,6 +171,16 @@
       to { opacity: 1; transform: scale(1); }
     }
 
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* Fade out class for the whole container */
+    .fade-out {
+      animation: fadeOut 0.6s forwards;
+    }
+
     @media (max-width: 480px) {
       .welcome-container {
         padding: 30px 20px;
@@ -134,15 +191,30 @@
       .btn-login {
         padding: 10px 20px;
       }
+      .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+      }
+      .tagline {
+        font-size: 1em;
+      }
+      .site-title {
+        font-size: 2.2em;
+        margin-bottom: 8px;
+      }
     }
   </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
 
-  <div class="welcome-container">
+  <div class="welcome-container" role="main" aria-label="Online Judge boot sequence">
+    <div class="site-title" aria-hidden="true">Deep Logic</div>
+    <div class="logo" aria-hidden="true"></div>
     <div id="loader">Starting<span class="dots"></span></div>
-    <div id="boot" class="boot-sequence"></div>
+    <div id="boot" class="boot-sequence" tabindex="0" aria-live="polite" aria-atomic="false"></div>
+    <div class="tagline">Code. Compile. Conquer.</div>
     <div id="progressBar"><div id="progressFill"></div></div>
     <a href="/auth/login/" class="btn-login" id="loginBtn" aria-label="Login to Online Judge">Enter Code Arena</a>
   </div>
@@ -151,12 +223,17 @@
     // Matrix background animation
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
     const letters = "01";
     const fontSize = 14;
     const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
+    const drops = Array.from({ length: Math.floor(columns) }).fill(1);
 
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -189,28 +266,35 @@
     const progressFill = document.getElementById("progressFill");
 
     let i = 0;
+
+    // Optional: beep sound on each line
+    const beep = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="); // silent short beep placeholder
+
     function showNextLine() {
       if (i < bootLines.length) {
         loader.style.display = "none";
         bootDiv.innerHTML += bootLines[i] + "\n";
-        progressFill.style.width = `${((i + 1) / bootLines.length) * 100}%`;
+        beep.play().catch(() => {}); // play beep but ignore errors if blocked
         i++;
-        setTimeout(showNextLine, 700);
+        progressFill.style.width = ((i / bootLines.length) * 100) + "%";
+        setTimeout(showNextLine, 1000);
       } else {
         loginBtn.classList.add("show");
-        sessionStorage.setItem("booted", "true");
+        loginBtn.focus();
       }
     }
 
-    if (sessionStorage.getItem("booted") === "true") {
-      // Show full boot instantly if already booted in session
-      loader.style.display = "none";
-      bootDiv.innerText = bootLines.join("\n");
-      progressFill.style.width = "100%";
-      loginBtn.classList.add("show");
-    } else {
-      setTimeout(showNextLine, 1000); // Delay to show loader briefly
-    }
+    setTimeout(showNextLine, 1000);
+
+    loginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      // fade out container then navigate
+      const container = document.querySelector(".welcome-container");
+      container.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = loginBtn.href;
+      }, 600);
+    });
   </script>
 </body>
 </html>
