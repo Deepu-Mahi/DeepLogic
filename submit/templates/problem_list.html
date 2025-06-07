@@ -374,7 +374,7 @@
                 <option value="Two Pointers" {% if request.GET.topic == 'Two Pointers' %}selected{% endif %}>Two Pointers</option>
                 <option value="Linked List" {% if request.GET.topic == 'Linked List' %}selected{% endif %}>Linked List</option>
                 <option value="Stacks and Queues" {% if request.GET.topic == 'Stacks and Queues' %}selected{% endif %}>Stacks and Queues</option>
-                <option value="Graphs - BFS/DFS" {% if request.GET.topic == 'Graphs - BFS/DFS' %}selected{% endif %}>Graphs - BFS/DFS</option>
+                
             </select>
 
             <button type="submit" aria-label="Search problems">Search</button>
@@ -392,7 +392,8 @@
             onclick="location.href='{% url 'problem_detail' problem.id %}'"
             onkeypress="if(event.key === 'Enter'){location.href='{% url 'problem_detail' problem.id %}';}"
         >
-            <p class="description" aria-describedby="desc-{{ problem.id }}">{{ problem.description|truncatewords:30 }}</p>
+            <p class="description" aria-describedby="title-{{ problem.id }}">{{ problem.title }}</p>
+
 
             <div class="tags">
                 <span class="difficulty {{ problem.difficulty }}">{{ problem.difficulty }}</span>

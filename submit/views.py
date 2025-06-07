@@ -64,7 +64,7 @@ def gemini_ai(request):
 
 
 def deeplogic_page(request):
-    return render(request, 'deeplogic.html')
+    return render(request, 'DeepLogic.html')
 
 # ----------------------------- Standalone Compiler with Submission Saving
 @login_required

@@ -60,6 +60,8 @@ class Problem(models.Model):
         ('Trees', 'Trees'),
         ('Bit Manipulation', 'Bit Manipulation'),
         ('Two Pointers', 'Two Pointers'),
+        ('Linked List','Linked List'),
+        ('Stacks and Queues','Stacks and Queues')
     ]
 
     title = models.CharField(max_length=200)  
