@@ -31,7 +31,9 @@ SECRET_KEY = "django-insecure-je43@(0vvzx^usnzg+@$9oqg+sj9ennac6-kr(92&o7wtn9lf4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['43.204.142.249', '127.0.0.1', 'localhost']
+
+
 
 
 # Application definition
@@ -85,12 +87,16 @@ WSGI_APPLICATION = "compiler.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': dj_database_url.parse(
+        os.getenv("DATABASE_URL")
+,
+        conn_max_age=600
+    )
 }
+
 
 
 # Password validation
@@ -136,6 +142,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = '/auth/login/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_REDIRECT_URL = '/submit/profile/'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
 
 
 
