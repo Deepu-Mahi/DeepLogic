@@ -6,22 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="DeepLogic - A futuristic online judge platform for coding and compiling solutions with style." />
   <meta property="og:title" content="DeepLogic Online Judge" />
-  <meta property="og:image" content="I:\Downloads\logo.png" />
   <link rel="icon" href="/static/favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100vh;
       background: linear-gradient(to bottom, #000000, #001f33);
       color: #00bfff;
       font-family: 'Fira Code', monospace;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow: hidden;
-      position: relative;
     }
 
     canvas#matrix {
@@ -33,8 +28,8 @@
 
     .welcome-container {
       position: relative;
-      z-index: 1;
-      background: rgba(0, 0, 0, 0.75);
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.8);
       border: 2px solid #00bfff;
       padding: 50px 40px;
       border-radius: 20px;
@@ -42,31 +37,24 @@
       text-align: center;
       animation: fadeIn 1s ease;
       max-width: 600px;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      margin: auto;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .site-title {
-      font-family: 'Fira Code', monospace;
       font-size: 3em;
       font-weight: bold;
       color: #00bfff;
       text-shadow: 0 0 15px #00bfffcc;
-      user-select: none;
-      pointer-events: none;
-      margin-bottom: 10px; /* Reduced space here */
+      margin-bottom: 10px;
       letter-spacing: 0.15em;
-      white-space: nowrap;
-      text-align: center;
     }
 
-    /* Logo placeholder */
     .logo {
       width: 80px;
       height: 80px;
-      margin-bottom: 20px;
+      margin: 0 auto 20px;
       background: url('/static/logo.png') no-repeat center/contain;
       filter: drop-shadow(0 0 5px #00bfff);
     }
@@ -82,74 +70,18 @@
       white-space: pre-line;
       font-size: 1em;
       line-height: 1.6em;
-      min-height: 180px;
       text-align: left;
-      width: 100%;
-      outline: none;
-    }
-
-    .btn-login {
-      display: inline-block;
-      padding: 14px 32px;
-      font-size: 1em;
-      font-weight: bold;
-      border: 2px solid #00bfff;
-      background: none;
-      color: #00bfff;
-      text-decoration: none;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #00bfff;
-      transition: all 0.3s ease-in-out;
-      margin-top: 20px;
-      opacity: 0;
-      pointer-events: none;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-      z-index: 2;
-    }
-
-    .btn-login.show {
-      opacity: 1;
-      pointer-events: all;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .btn-login:hover,
-    .btn-login:focus {
-      background-color: #00bfff;
-      color: black;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px #00bfff;
-      outline: none;
-    }
-
-    .btn-login:active {
-      transform: scale(0.95);
-    }
-
-    /* Visible focus ring for accessibility */
-    .btn-login:focus-visible {
-      outline: 3px solid #00bfff;
-      outline-offset: 4px;
+      margin-bottom: 20px;
     }
 
     #loader {
       font-size: 1.1em;
       margin-bottom: 10px;
-      animation: fadeIn 0.5s ease;
     }
 
     .dots::after {
       content: '';
       animation: dots 1.2s steps(3, end) infinite;
-    }
-
-    @keyframes dots {
-      0% { content: ''; }
-      33% { content: '.'; }
-      66% { content: '..'; }
-      100% { content: '...'; }
     }
 
     #progressBar {
@@ -163,22 +95,19 @@
       height: 100%;
       background: #00bfff;
       width: 0%;
-      transition: width 0.6s;
+      transition: width 0.5s;
+    }
+
+    @keyframes dots {
+      0% { content: ''; }
+      33% { content: '.'; }
+      66% { content: '..'; }
+      100% { content: '...'; }
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-
-    /* Fade out class for the whole container */
-    .fade-out {
-      animation: fadeOut 0.6s forwards;
     }
 
     @media (max-width: 480px) {
@@ -188,39 +117,50 @@
       .boot-sequence {
         font-size: 0.9em;
       }
-      .btn-login {
-        padding: 10px 20px;
-      }
       .logo {
         width: 60px;
         height: 60px;
-        margin-bottom: 15px;
-      }
-      .tagline {
-        font-size: 1em;
       }
       .site-title {
         font-size: 2.2em;
-        margin-bottom: 8px;
       }
+    }
+
+    /* ✨ Animation overlay for page transition */
+    #transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #00bfff, #001f33, #000);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    #transition-overlay.active {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
 
-  <div class="welcome-container" role="main" aria-label="Online Judge boot sequence">
-    <div class="site-title" aria-hidden="true">Deep Logic</div>
-    <div class="logo" aria-hidden="true"></div>
+  <div class="welcome-container">
+    <div class="site-title">Deep Logic</div>
+    <div class="logo"></div>
     <div id="loader">Starting<span class="dots"></span></div>
-    <div id="boot" class="boot-sequence" tabindex="0" aria-live="polite" aria-atomic="false"></div>
+    <div id="boot" class="boot-sequence"></div>
     <div class="tagline">Code. Compile. Conquer.</div>
     <div id="progressBar"><div id="progressFill"></div></div>
-    <a href="/auth/login/" class="btn-login" id="loginBtn" aria-label="Login to Online Judge">Enter Code Arena</a>
   </div>
 
+  <div id="transition-overlay"></div>
+
   <script>
-    // Matrix background animation
+    // Matrix Rain
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() {
@@ -250,51 +190,41 @@
     setInterval(draw, 33);
 
     // Boot Sequence
-    const user = localStorage.getItem("username") || "Coder";
     const bootLines = [
       "> Initializing Online Judge...",
       "> Loading problem sets... ✔",
       "> Connecting to compiler... ✔",
       "> Verifying environment... ✔",
       "> Compilers active. ✔",
-      `> Ready. Welcome, ${user}.`
+      "> Welcome back, Coder."
     ];
 
     const bootDiv = document.getElementById("boot");
     const loader = document.getElementById("loader");
-    const loginBtn = document.getElementById("loginBtn");
     const progressFill = document.getElementById("progressFill");
+    const transitionOverlay = document.getElementById("transition-overlay");
 
     let i = 0;
-
-    // Optional: beep sound on each line
-    const beep = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="); // silent short beep placeholder
+    const beep = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=");
 
     function showNextLine() {
       if (i < bootLines.length) {
         loader.style.display = "none";
         bootDiv.innerHTML += bootLines[i] + "\n";
-        beep.play().catch(() => {}); // play beep but ignore errors if blocked
+        beep.play().catch(() => {});
+        progressFill.style.width = ((i + 1) / bootLines.length) * 100 + "%";
         i++;
-        progressFill.style.width = ((i / bootLines.length) * 100) + "%";
-        setTimeout(showNextLine, 1000);
+        setTimeout(showNextLine, 900);
       } else {
-        loginBtn.classList.add("show");
-        loginBtn.focus();
+        // Add glowing fade-out
+        transitionOverlay.classList.add("active");
+        setTimeout(() => {
+          window.location.href = "/deeplogic/";
+        }, 1400); // Wait for transition animation
       }
     }
 
     setTimeout(showNextLine, 1000);
-
-    loginBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      // fade out container then navigate
-      const container = document.querySelector(".welcome-container");
-      container.classList.add("fade-out");
-      setTimeout(() => {
-        window.location.href = loginBtn.href;
-      }, 600);
-    });
   </script>
 </body>
 </html>

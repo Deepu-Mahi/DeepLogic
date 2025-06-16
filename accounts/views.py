@@ -1,3 +1,6 @@
+import random
+from django.core.mail import send_mail
+from django.conf import settings
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -10,29 +13,70 @@ def welcome(request):
     return render(request, 'welcome.html')
 
 def register_user(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = User.objects.filter(username=username)
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'User with this username already exists')
+            return redirect('/auth/register/')
 
-        if user.exists():
-            messages.info(request,'User with this username already exists')
-            return redirect("/auth/register/")
-        
-        user = User.objects.create_user(username=username)
+        otp = random.randint(100000, 999999)
 
-        user.set_password(password)
+        # Save in session
+        request.session['register_data'] = {
+            'username': username,
+            'email': email,
+            'password': password,
+            'otp': str(otp),
+        }
+        request.session.modified = True
+        request.session.set_expiry(300)  # Optional: expires in 5 minutes
 
-        user.save()
-        
-        messages.info(request,'User created successfully')
+        try:
+            send_mail(
+                'Your DeepLogic OTP',
+                f'Your OTP for DeepLogic registration is: {otp}',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            messages.error(request, f"Error sending OTP: {str(e)}")
+            return redirect('/auth/register/')
+
+        messages.success(request, 'OTP sent to your email.')
+        return redirect('/auth/verify_otp/')
+
+    return render(request, 'register.html')
+
+
+def verify_otp(request):
+    temp_user = request.session.get('register_data')
+    if not temp_user:
+        messages.error(request, "Session expired. Please register again.")
         return redirect('/auth/register/')
-    
-    template = loader.get_template('register.html')
-    context = {}
-    return HttpResponse(template.render(context,request))
+
+    if request.method == 'POST':
+        input_otp = request.POST.get('otp')
+        if input_otp == temp_user['otp']:
+            user = User.objects.create_user(
+                username=temp_user['username'],
+                email=temp_user['email']
+            )
+            user.set_password(temp_user['password'])
+            user.save()
+
+            del request.session['register_data']
+            messages.success(request, "Registration successful. Please login.")
+            return redirect('/auth/login/')
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
+
+    return render(request, 'verify_otp.html')
+
+
     
 
 def login_user(request):

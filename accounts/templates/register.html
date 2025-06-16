@@ -1,208 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Register</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
-    <style>
-      body {
-        background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        font-family: 'Fira Code', monospace;
-        color: #fff;
-        overflow: hidden;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-family: 'Fira Code', monospace;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .register-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 2.5rem;
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.3);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      color: #00bfff;
+      animation: popIn 0.6s ease-out;
+    }
+
+    h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .alert {
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      background: linear-gradient(45deg, #00bfff, #1e90ff);
+      color: #000;
+      border: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px #00bfff, 0 0 20px #00bfff;
+    }
+
+    label,
+    input,
+    a,
+    p {
+      color: #00bfff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .form-text {
+      text-align: center;
+      color: #00bfff;
+    }
+
+    .form-control {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      border: 1px solid #00bfff;
+      color: #fff !important;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .form-control::placeholder {
+      color: #b2eaff;
+      opacity: 0.8;
+    }
+
+    .form-control:focus {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      color: #fff !important;
+      box-shadow: 0 0 8px #00bfff;
+      border-color: #00bfff;
+      outline: none;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
       }
 
-      .register-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2.5rem;
-        box-shadow: 0 0 30px rgba(0, 191, 255, 0.3);
-        width: 100%;
-        max-width: 500px;
-        border: 1px solid rgba(0, 191, 255, 0.4);
-        color: #00bfff;
-        animation: popIn 0.6s ease-out;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      h3 {
-        text-align: center;
-        margin-bottom: 1.5rem;
-        font-weight: 600;
-      }
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
 
-      .alert {
-        font-size: 0.95rem;
-      }
+    .password-wrapper input.form-control {
+      padding-right: 2.8rem;
+      flex-grow: 1;
+    }
 
-      .btn-primary {
-        width: 100%;
-        font-size: 1.1rem;
-        border-radius: 8px;
-        background: linear-gradient(45deg, #00bfff, #1e90ff);
-        color: #000;
-        border: none;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
-      }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      cursor: pointer;
+      color: #00bfff;
+      font-size: 1.25rem;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
 
-      .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 12px #00bfff, 0 0 20px #00bfff;
-      }
+    .toggle-password:hover,
+    .toggle-password:focus {
+      color: #1ec5ff;
+      outline: none;
+    }
+  </style>
+</head>
 
-      label, input, a, p {
-        color: #00bfff;
-      }
+<body>
+  <div class="register-card">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h3>Register</h3>
+      <hr />
 
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .form-text {
-        text-align: center;
-        color: #00bfff;
-      }
-
-      .form-control {
-        background-color: rgba(0, 0, 0, 0.4) !important;
-        border: 1px solid #00bfff;
-        color: #fff !important;
-        transition: box-shadow 0.3s ease;
-      }
-
-      .form-control::placeholder {
-        color: #b2eaff;
-        opacity: 0.8;
-      }
-
-      .form-control:focus {
-        background-color: rgba(0, 0, 0, 0.4) !important;
-        color: #fff !important;
-        box-shadow: 0 0 8px #00bfff;
-        border-color: #00bfff;
-        outline: none;
-      }
-
-      @keyframes popIn {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* Password input + toggle icon container */
-      .password-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
-
-      .password-wrapper input.form-control {
-        padding-right: 2.8rem; /* space for toggle icon */
-        flex-grow: 1;
-      }
-
-      .toggle-password {
-        position: absolute;
-        right: 12px;
-        cursor: pointer;
-        color: #00bfff;
-        font-size: 1.25rem;
-        user-select: none;
-        transition: color 0.3s ease;
-      }
-
-      .toggle-password:hover,
-      .toggle-password:focus {
-        color: #1ec5ff;
-        outline: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="register-card">
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h3>Register</h3>
-        <hr />
-
-        {% if messages %}
-          <div class="alert alert-primary" role="alert">
-            {% for message in messages %}
-              {{ message }}
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        <div class="form-group">
-          <label for="usernameInput">Username</label>
-          <input
-            type="text"
-            class="form-control"
-            name="username"
-            id="usernameInput"
-            placeholder="Enter username"
-            required
-            autocomplete="username"
-            aria-required="true"
-          />
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center" role="alert">
+          {{ message }}
         </div>
+      {% endfor %}
 
-        <div class="form-group">
-          <label for="passwordInput">Password</label>
-          <div class="password-wrapper">
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              id="passwordInput"
-              placeholder="Password"
-              required
-              autocomplete="new-password"
-              aria-required="true"
-              aria-describedby="togglePasswordDesc"
-            />
-            <span id="togglePassword" role="button" tabindex="0" aria-label="Toggle password visibility" class="toggle-password">&#128065;</span>
-          </div>
+      <div class="form-group">
+        <label for="usernameInput">Username</label>
+        <input type="text" class="form-control" name="username" id="usernameInput" placeholder="Enter username" required
+          autocomplete="username" aria-required="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="emailInput">Email</label>
+        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Enter email" required
+          autocomplete="email" aria-required="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="passwordInput">Password</label>
+        <div class="password-wrapper">
+          <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password" required
+            autocomplete="new-password" aria-required="true" aria-describedby="togglePasswordDesc" />
+          <span id="togglePassword" role="button" tabindex="0" aria-label="Toggle password visibility"
+            class="toggle-password">&#128065;</span>
         </div>
+      </div>
 
-        <p class="form-text mb-3">
-          Already have an account? <a href="/auth/login/">Login</a>
-        </p>
+      <p class="form-text mb-2">
+        Already have an account? <a href="/auth/login/">Login</a>
+      </p>
 
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
-    </div>
+      
 
-    <script>
-      const togglePassword = document.getElementById('togglePassword');
-      const passwordInput = document.getElementById('passwordInput');
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
 
-      togglePassword.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        togglePassword.textContent = type === 'password' ? '\u{1F441}' : '\u{1F576}'; // 👁️ or 🕶️
-      });
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
 
-      // Keyboard accessibility for toggle
-      togglePassword.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          togglePassword.click();
-        }
-      });
-    </script>
-  </body>
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      togglePassword.textContent = type === 'password' ? '\u{1F441}' : '\u{1F576}';
+    });
+
+    togglePassword.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePassword.click();
+      }
+    });
+  </script>
+</body>
+
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verify OTP</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      font-family: 'Fira Code', monospace;
+      color: #00bfff;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .otp-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+    }
+
+    .form-control {
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 1px solid #00bfff;
+      color: #fff;
+    }
+
+    .form-control::placeholder {
+      color: #b2eaff;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(45deg, #00bfff, #1e90ff);
+      border: none;
+      color: black;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 10px #00bfff;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-card">
+    <h4 class="text-center">Verify OTP</h4>
+
+    {% if messages %}
+      <div class="mt-2">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="otp">Enter OTP sent to your email</label>
+        <input type="text" name="otp" class="form-control" id="otp" placeholder="Enter OTP" required />
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Verify</button>
+    </form>
+  </div>
+</body>
+</html>
