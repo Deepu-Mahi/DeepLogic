@@ -7,25 +7,30 @@ DeepLogic is a powerful Online Judge platform and code compiler system. It provi
 ## 🌟 Features
 
 - 🔐 User registration, login, and profile management  
+- 🌐 Cinematic landing page with automatic redirection to info page  
+- ℹ️ Info page with project overview, features, and links  
 - 📚 Problem list with detailed descriptions and constraints  
-- ✍️ Code editor with support for Python, C, C++, and Java  
-- 🧪 Automatic code execution and test case validation  
+- ✍️ Integrated code editor with support for Python, C, C++, and Java  
+- 🧪 Automatic test case execution and validation  
+- 🤖 AI-assisted debugging and code explanation (OpenAI & Gemini APIs)  
+- 🧑‍💻 Standalone compiler with multi-language support and AI help  
 - 📜 Submission history tracking per user  
-- 🧠 AI support for debugging and explanation (optional via OpenAI/Gemini)  
 - ⚙️ Admin panel to manage problems and test cases  
-- 💡 Responsive and clean UI using Bootstrap  
+- 💡 Responsive and clean UI using Bootstrap 5  
 
 ---
 
 ## 🧰 Tech Stack
 
-| Layer      | Tech                          |
-|------------|-------------------------------|
-| Backend    | Django (Python)               |
-| Frontend   | HTML, CSS, JavaScript, Bootstrap 5 |
-| Database   | SQLite (development), PostgreSQL (production) |
-| Code Exec  | Subprocess (Docker-ready)     |
-| Deployment | Railway / Vercel / Docker     |
+| Layer        | Tech                                  |
+|--------------|---------------------------------------|
+| Backend      | Django (Python)                       |
+| Frontend     | HTML, CSS, JavaScript, Bootstrap 5    |
+| Database     | SQLite (development), PostgreSQL (production) |
+| Code Exec    | Subprocess (Docker-ready)             |
+| Deployment   | AWS (Elastic Beanstalk / EC2 / RDS)   |
+| AI Debugging | Google Gemini API        |
+
 
 ---
 
