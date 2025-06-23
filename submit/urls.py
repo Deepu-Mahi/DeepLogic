@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib.auth.decorators import login_required
 from .views import (
     submit,
     logout_user,
@@ -13,45 +12,26 @@ from .views import (
 )
 
 urlpatterns = [
-    # ------------------------------------
     # Compiler Page (Standalone)
-    # Accessible only to logged-in users
-    # URL: /
-    path('', login_required(submit, login_url='/auth/login/'), name='submit'),
+    path('', submit, name='submit'),
 
-    # ------------------------------------
-    # Authentication Routes
-    # Logout user and redirect to login page
-    # URL: /logout/
+    # Authentication
     path('logout/', logout_user, name='logout'),
 
-    # ------------------------------------
-    # User Profile
-    # Shows user profile and submission history
-    # URL: /profile/
-    path('profile/', login_required(profile_view, login_url='/auth/login/'), name='profile'),
+    # Profile
+    path('profile/', profile_view, name='profile'),
 
+    # Landing Page
     path('deeplogic/', deeplogic_page, name='deeplogic'),
 
-    # ------------------------------------
-    # Problem Browsing
-    # List of problems with filters
-    # URL: /problems/
-    path('problems/', login_required(problem_list, login_url='/auth/login/'), name='problem_list'),
+    # Problem Pages
+    path('problems/', problem_list, name='problem_list'),
+    path('problems/<int:problem_id>/', problem_detail, name='problem_detail'),
 
-    # Problem detail page with test case submission
-    # URL: /problems/<problem_id>/
-    path('problems/<int:problem_id>/', login_required(problem_detail, login_url='/auth/login/'), name='problem_detail'),
-
-    # ------------------------------------
-    # AI Integration Endpoints
-    # Gemini AI code fixer and improver
-    # URL: /gemini-ai/
+    # AI Endpoints
     path('gemini-ai/', gemini_ai, name='gemini_ai'),
-
-    # Gemini AI to generate boilerplate code from problem description
-    # URL: /ask_ai_boilerplate/
     path('ask_ai_boilerplate/', ask_ai_for_boilerplate, name='ask_ai_boilerplate'),
-    path('update-profile/', update_profile, name='update_profile'),
 
+    # Profile Update
+    path('update-profile/', update_profile, name='update_profile'),
 ]

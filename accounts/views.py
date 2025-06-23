@@ -78,11 +78,11 @@ def verify_otp(request):
 
 
     
-
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+        next_url = request.POST.get('next') or '/submit/profile/'  # default fallback
 
         if not User.objects.filter(username=username).exists():
             messages.info(request, 'User with this username does not exist')
@@ -96,12 +96,11 @@ def login_user(request):
 
         login(request, user)
         messages.info(request, 'Login successful')
+        return redirect(next_url)
 
-        return redirect('/submit/profile/')  # Redirect to profile page after login
-
-    template = loader.get_template('login.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
+    # For GET request: check if next param exists
+    next_url = request.GET.get('next', '')
+    return render(request, 'login.html', {'next': next_url})
 
 
 def logout_user(request):

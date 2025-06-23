@@ -6,6 +6,6 @@ typing_extensions==4.12.0
 google-generativeai==0.4.1
 dj-database-url==1.0.0
 psycopg2-binary==2.9.6
-
+whitenoise
 
 

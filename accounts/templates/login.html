@@ -106,7 +106,6 @@
       }
     }
 
-    /* Password input + toggle icon container */
     .password-wrapper {
       position: relative;
       display: flex;
@@ -114,7 +113,7 @@
     }
 
     .password-wrapper input.form-control {
-      padding-right: 2.8rem; /* space for toggle icon */
+      padding-right: 2.8rem;
       flex-grow: 1;
     }
 
@@ -186,6 +185,9 @@
         Don't have an account? <a href="/auth/register/">Register</a>
       </p>
 
+      <!-- Preserve 'next' redirect URL -->
+      <input type="hidden" name="next" value="{{ next }}">
+
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
   </div>
@@ -200,7 +202,6 @@
       togglePassword.textContent = type === 'password' ? '\u{1F441}' : '\u{1F576}'; // 👁️ or 🕶️
     });
 
-    // Also support keyboard accessibility
     togglePassword.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
