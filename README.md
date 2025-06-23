@@ -76,7 +76,7 @@ python manage.py runserver
 - Clean, responsive layout across all screen sizes
 - Pages include:
   - 🌐 Landing Page
-
+  ![Screenshot](accounts/Landingpage.png)
 
   - 🔐 Login/Register
 ![Screenshot](accounts/Login.png)
