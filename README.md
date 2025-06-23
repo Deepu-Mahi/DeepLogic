@@ -78,6 +78,9 @@ python manage.py runserver
   - 🌐 Landing Page
   ![Screenshot](accounts/Landingpage.png)
 
+  - 🧾 Info Page (Auto-redirect after boot)
+  ![Screenshot](accounts/Info.png)
+
   - 🔐 Login/Register
 ![Screenshot](accounts/Login.png)
 
@@ -89,6 +92,9 @@ python manage.py runserver
 
   - 📘 Problem Detail (with Code Editor)
 ![Screenshot](accounts/ProblemDetail.png)
+
+  - 🖥️ Standalone Compiler Page
+![Screenshot](accounts/Standalone.png)
 
 - Bootstrap components used for layout, modals, buttons, and responsiveness
 - JavaScript enables form validation and real-time UI interactivity
